@@ -1,0 +1,41 @@
+Server Changelog:
+
+12/9/2015 3:00 PM
+installed SickGear Dependencies: (with auto yes)
+sudo apt-get install python-cheetah unrar-free git -y
+cloned github repository:
+sudo git clone https://github.com/SickGear/SickGear.git /opt/SickGear
+added group apps:
+sudo addgroup --system apps
+added SickGear User: (no password / system user / home directory / no
+fuckin idea / what group the user is in / name of user)
+sudo adduser --disabled-password --system --home /var/lib/sickgear
+--gecos "SickGear" --ingroup apps sickgear
+changed owner of /opt/SickGear to sickgear: (recursively)
+sudo chown sickgear -R /opt/SickGear
+Tested SickGear:
+sudo -u sickgear python /opt/SickGear/SickBeard.py
+checked that it was active:
+192.168.1.34:8081
+Copied SickGear systemd script from personal git to systemd start script folder:
+sudo cp /absolute path folder of script/sickgear.service /etc/systemd/system/sickgear.service
+Enabled the SickGear systemd script:
+sudo systemctl enable sickrage.service
+Rebooted:
+sudo reboot
+
+12/9/2015 3:00 PM
+
+Created user deluge and put in system user and group apps.
+sudo adduser --disabled-password --system --home /var/lib/deluge --gecos "Deluge Server" --ingroup apps deluge
+Created logs and changed owner to deluge:
+sudo touch /var/log/deluged.log
+sudo touch /var/log/deluge-web.log
+sudo chown deluge:apps /var/log/deluge*
+Installed the Daemon:
+sudo apt-get install deluged
+Installed the WebUI:
+sudo apt-get install deluge-webui
+Copied deluged systemd script from personal git to systemd start script
+folder:
+sudo cp /absolute path folder of script/sickgear.service /etc/systemd/system/deluged.service
