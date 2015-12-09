@@ -1,6 +1,7 @@
 Server Changelog:
 
 12/9/2015 3:00 PM
+
 installed SickGear Dependencies: (with auto yes)
 sudo apt-get install python-cheetah unrar-free git -y
 cloned github repository:
@@ -38,4 +39,21 @@ Installed the WebUI:
 sudo apt-get install deluge-webui
 Copied deluged systemd script from personal git to systemd start script
 folder:
-sudo cp /absolute path folder of script/sickgear.service /etc/systemd/system/deluged.service
+sudo cp /absolute path folder of script/deluged.service /etc/systemd/system/deluged.service
+Started deluged service, verified it was running, and enabled it to start on boot:
+systemctl start deluged
+systemctl status deluged
+systemctl enable deluged
+Copied deluged systemd script from personal git to systemd start script
+folder:
+sudo cp /absolute path folder of script/deluge-web.service /etc/systemd/system/deluge-web.service
+Started deluged service, verified it was running, and enabled it to start on boot:
+systemctl start deluge-web
+systemctl status deluge-web
+systemctl enable deluge-web
+Created a log directory for Deluge and gave deluge full access:
+sudo mkdir -p /var/log/deluge
+sudo chown -R deluge:apps /var/log/deluge
+sudo chmod -R 750 /var/log/deluge
+Restarted server:
+sudo reboot
