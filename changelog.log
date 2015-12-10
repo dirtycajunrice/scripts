@@ -15,6 +15,11 @@ sudo systemctl restart ssh
 
 12/8/2015 ?:?? AM
 
+Synced DirtyCajunRice's GitHub scripts repository:
+sudo git clone https://github.com/DirtyCajunRice/scripts.git ~
+
+12/8/2015 ?:?? AM
+
 Installed Samba
 sudo apt-get install samba
 Set passwords for any and all users:
@@ -24,7 +29,7 @@ mkdir -m 777 ~/testshare #or wherever else you want to keep them all organized.
 copied the original samba configuration file to the home directory just in case:
 sudo cp /etc/samba/smb.conf ~/smb_original.conf
 added all of the share directories for the previously made shared folders: 
-(copy template out of smb_example.conf in GitHub and add to bottom without touching other settings for now)
+(copy template out of smb_example.conf in ~/scripts and add to bottom without touching other settings for now)
 Restarted Samba:
 sudo service smbd restart
 Test to see if files are available!!!
@@ -56,8 +61,8 @@ Tested SickGear:
 sudo -u sickgear python /opt/SickGear/SickBeard.py
 checked that it was active:
 192.168.1.34:8081
-Copied SickGear systemd script from personal git to systemd start script folder:
-sudo cp /absolute path folder of script/sickgear.service /etc/systemd/system/sickgear.service
+Copied SickGear systemd script from ~/scripts to systemd start script folder:
+sudo cp ~/scripts/sickgear.service /etc/systemd/system/sickgear.service
 Enabled the SickGear systemd script:
 sudo systemctl enable sickrage.service
 Rebooted:
@@ -75,16 +80,16 @@ Installed the Daemon:
 sudo apt-get install deluged
 Installed the WebUI:
 sudo apt-get install deluge-webui
-Copied deluged systemd script from personal git to systemd start script
+Copied deluged systemd script from ~/scripts to systemd start script
 folder:
-sudo cp /absolute path folder of script/deluged.service /etc/systemd/system/deluged.service
+sudo cp ~/scripts/deluged.service /etc/systemd/system/deluged.service
 Started deluged service, verified it was running, and enabled it to start on boot:
 sudo systemctl start deluged
 sudo systemctl status deluged
 sudo systemctl enable deluged
-Copied deluged systemd script from personal git to systemd start script
+Copied deluged systemd script from ~/scripts to systemd start script
 folder:
-sudo cp /absolute path folder of script/deluge-web.service /etc/systemd/system/deluge-web.service
+sudo cp ~/scripts/deluge-web.service /etc/systemd/system/deluge-web.service
 Started deluged service, verified it was running, and enabled it to start on boot:
 sudo systemctl start deluge-web
 sudo systemctl status deluge-web
@@ -109,8 +114,8 @@ sudo git clone https://github.com/RuudBurger/CouchPotatoServer.git /opt/CouchPot
 Tesed to make sure it was working:
 python /opt/CouchPotatoServer/CouchPotato.py
 http://localhost:5050/
-Copy CouchPotatoServer systemd script from Github to systemd folder:
-sudo cp /absolute path folder of script/couchpotato.service /etc/systemd/system/couchpotato.service
+Copy CouchPotatoServer systemd script from ~/scripts to systemd folder:
+sudo cp ~/scripts/couchpotato.service /etc/systemd/system/couchpotato.service
 Created user couchpotato and put in system user and group apps:
 sudo adduser --disabled-password --system --home /var/lib/couchpotato --gecos "CouchPotato Server" --ingroup apps couchpotato
 Changed Ownership of CouchPotatoServer folder
@@ -138,11 +143,13 @@ sudo adduser --disabled-password --system --home /var/lib/teamspeak --gecos "Tea
 Moved all the files to opt folder:
 sudo mv teamspeak3-server_linux-amd64 /opt/Teamspeak
 Changed Ownership of Teamspeak folder
-sudo chown teamspeak -R /opt/Teamspeak
-Copy Teamspeak systemd script from Github to systemd folder:
+sudo chown -R teamspeak /opt/Teamspeak
+Copy Teamspeak systemd script from ~/scripts to systemd folder:
 sudo cp ~/scripts/teamspeak.service /etc/systemd/system/teamspeak.service
-Copy Teamspeak ini file from Github folder to working directory:
+Copy Teamspeak ini file from ~/scripts folder to working directory:
 sudo cp ~/scripts/ts3server.ini /opt/Teamspeak/ts3server.ini
+Tested server and started to get Query account and admin token:
+sudo /opt/Teamspeak/ts3server_startscript.sh start
 Started teamspeak service, verified it was running, and enabled it to start on boot:
 sudo systemctl start teamspeak
 sudo systemctl status teamspeak
