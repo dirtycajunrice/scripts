@@ -46,7 +46,7 @@ sudo usermod -a -G apps plex
 
 Installed SickGear Dependencies: (with auto yes)
 sudo apt-get install python-cheetah unrar-free git -y
-Cloned github repository:
+Cloned SickGear github repository:
 sudo git clone https://github.com/SickGear/SickGear.git /opt/SickGear
 Added SickGear User: (no password / system user / home directory / no fuckin idea / what group the user is in / name of user)
 sudo adduser --disabled-password --system --home /var/lib/sickgear --gecos "SickGear" --ingroup apps sickgear
@@ -79,16 +79,16 @@ Copied deluged systemd script from personal git to systemd start script
 folder:
 sudo cp /absolute path folder of script/deluged.service /etc/systemd/system/deluged.service
 Started deluged service, verified it was running, and enabled it to start on boot:
-systemctl start deluged
-systemctl status deluged
-systemctl enable deluged
+sudo systemctl start deluged
+sudo systemctl status deluged
+sudo systemctl enable deluged
 Copied deluged systemd script from personal git to systemd start script
 folder:
 sudo cp /absolute path folder of script/deluge-web.service /etc/systemd/system/deluge-web.service
 Started deluged service, verified it was running, and enabled it to start on boot:
-systemctl start deluge-web
-systemctl status deluge-web
-systemctl enable deluge-web
+sudo systemctl start deluge-web
+sudo systemctl status deluge-web
+sudo systemctl enable deluge-web
 Created a log directory for Deluge and gave deluge full access:
 sudo mkdir -p /var/log/deluge
 sudo chown -R deluge:apps /var/log/deluge
@@ -99,4 +99,53 @@ sudo chmod -R 755 .config
 sudo nano .config/deluge/auth
 add username:password:10
 Restarted server:
+sudo reboot
+http://localhost:8112/
+
+12/9/2015 6:50PM
+
+Cloned CouchPotatoServer github repository:
+sudo git clone https://github.com/RuudBurger/CouchPotatoServer.git /opt/CouchPotatoServer
+Tesed to make sure it was working:
+python /opt/CouchPotatoServer/CouchPotato.py
+http://localhost:5050/
+Copy CouchPotatoServer systemd script from Github to systemd folder:
+sudo cp /absolute path folder of script/couchpotato.service /etc/systemd/system/couchpotato.service
+Created user couchpotato and put in system user and group apps:
+sudo adduser --disabled-password --system --home /var/lib/couchpotato --gecos "CouchPotato Server" --ingroup apps couchpotato
+Changed Ownership of CouchPotatoServer folder
+sudo chown couchpotato -R /opt/CouchPotatoServer
+Started couchpotato service, verified it was running, and enabled it to start on boot:
+sudo systemctl start couchpotato
+sudo systemctl status couchpotato
+sudo systemctl enable couchpotato
+Rebooted System
+sudo reboot
+
+12/9/2015 7:12PM
+
+Installed Apache Web Server:
+sudo apt-get install apache2
+(done. wasnt that easy!?)
+
+12/9/2015 9:25PM
+
+download teamspeak server and ssh it to your server.
+extract the .tar:
+tar xzf teams*
+Create teamspeak user and put in system users:
+sudo adduser --disabled-password --system --home /var/lib/teamspeak --gecos "Teamspeak Server" --group teamspeak
+Moved all the files to opt folder:
+sudo mv teamspeak3-server_linux-amd64 /opt/Teamspeak
+Changed Ownership of Teamspeak folder
+sudo chown teamspeak -R /opt/Teamspeak
+Copy Teamspeak systemd script from Github to systemd folder:
+sudo cp ~/scripts/teamspeak.service /etc/systemd/system/teamspeak.service
+Copy Teamspeak ini file from Github folder to working directory:
+sudo cp ~/scripts/ts3server.ini /opt/Teamspeak/ts3server.ini
+Started teamspeak service, verified it was running, and enabled it to start on boot:
+sudo systemctl start teamspeak
+sudo systemctl status teamspeak
+sudo systemctl enable teamspeak
+Reboot system
 sudo reboot
