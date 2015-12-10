@@ -1,18 +1,56 @@
 Server Changelog:
 
+Initial:
+Installed Ubuntu Server 15.10 with no packages
+
+12/8/2015 ?:?? AM
+
+Installed SSH:
+sudo apt-get install ssh -y
+Changed default ssh port so i could access outside: {optional can just add under instead of replace}
+sudo nano /etc/ssh/sshd_config
+Port ???
+Restarted SSH Service
+sudo systemctl restart ssh
+
+12/8/2015 ?:?? AM
+
+Installed Samba
+sudo apt-get install samba
+Set passwords for any and all users:
+sudo smbpasswd -a (user_name) #e.g. sudo smbpasswd -a nick
+create share folder: (repeat for all shared folders / -m is to allow the file permission argument 777)
+mkdir -m 777 ~/testshare #or wherever else you want to keep them all organized.
+copied the original samba configuration file to the home directory just in case:
+sudo cp /etc/samba/smb.conf ~/smb_original.conf
+added all of the share directories for the previously made shared folders: 
+(copy template out of smb_example.conf in GitHub and add to bottom without touching other settings for now)
+Restarted Samba:
+sudo service smbd restart
+Test to see if files are available!!!
+
+12/8/2015 ?:?? AM
+
+Grabbed PlexMediaServer from the website: (get link from website)
+wget https://downloads.plex.tv/plex-media-server/0.9.14.4.1556-a10e3c2/plexmediaserver_0.9.14.4.1556-a10e3c2_amd64.deb
+Installed PlexMediaServer: (astrick is so you dont have to type it all in and -i is install)
+sudo dpkg -i plexmediaserver*
+To access: (or correct internal/external address)
+http://127.0.0.1:32400/web 
+Added group apps:
+sudo addgroup --system apps
+add user plex to apps group:
+sudo usermod -a -G apps plex
+
 12/9/2015 3:00 PM
 
-installed SickGear Dependencies: (with auto yes)
+Installed SickGear Dependencies: (with auto yes)
 sudo apt-get install python-cheetah unrar-free git -y
-cloned github repository:
+Cloned github repository:
 sudo git clone https://github.com/SickGear/SickGear.git /opt/SickGear
-added group apps:
-sudo addgroup --system apps
-added SickGear User: (no password / system user / home directory / no
-fuckin idea / what group the user is in / name of user)
-sudo adduser --disabled-password --system --home /var/lib/sickgear
---gecos "SickGear" --ingroup apps sickgear
-changed owner of /opt/SickGear to sickgear: (recursively)
+Added SickGear User: (no password / system user / home directory / no fuckin idea / what group the user is in / name of user)
+sudo adduser --disabled-password --system --home /var/lib/sickgear --gecos "SickGear" --ingroup apps sickgear
+Changed owner of /opt/SickGear to sickgear: (recursively)
 sudo chown sickgear -R /opt/SickGear
 Tested SickGear:
 sudo -u sickgear python /opt/SickGear/SickBeard.py
@@ -25,7 +63,7 @@ sudo systemctl enable sickrage.service
 Rebooted:
 sudo reboot
 
-12/9/2015 3:00 PM
+12/9/2015 3:49 PM
 
 Created user deluge and put in system user and group apps.
 sudo adduser --disabled-password --system --home /var/lib/deluge --gecos "Deluge Server" --ingroup apps deluge
@@ -55,5 +93,10 @@ Created a log directory for Deluge and gave deluge full access:
 sudo mkdir -p /var/log/deluge
 sudo chown -R deluge:apps /var/log/deluge
 sudo chmod -R 750 /var/log/deluge
+Added new Authorization to auth file to allow thin client to work: (had to change some permissions)
+cd /var/lib/deluge
+sudo chmod -R 755 .config
+sudo nano .config/deluge/auth
+add username:password:10
 Restarted server:
 sudo reboot
