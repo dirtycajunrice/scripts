@@ -7,7 +7,7 @@ User=sonarr
 Group=apps
 
 Type=simple
-ExecStart=/usr/bin/mono /opt/NzbDrone/NzbDrone.exe -nobrowser
+ExecStart=/usr/bin/mono /opt/NzbDrone/NzbDrone.exe
 TimeoutStopSec=20
 KillMode=process
 Restart=on-failure
