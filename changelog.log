@@ -159,7 +159,7 @@ sudo reboot
 
 12/11/2015 3:07 AM
 
-wanted to try out sonarr so i got the repository then downloaded sonarr:
+wanted to try out sonarr so i got the repository then downloaded sonarr:   (Side note sonarr shits on sickanything)
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FDA5DFFC
 echo "deb http://apt.sonarr.tv/ master main" | sudo tee /etc/apt/sources.list.d/sonarr.list
 sudo apt-get install nzbdrone 
