@@ -107,7 +107,7 @@ Restarted server:
 sudo reboot
 http://localhost:8112/
 
-12/9/2015 6:50PM
+12/9/2015 6:50 PM
 
 Cloned CouchPotatoServer github repository:
 sudo git clone https://github.com/RuudBurger/CouchPotatoServer.git /opt/CouchPotatoServer
@@ -127,13 +127,13 @@ sudo systemctl enable couchpotato
 Rebooted System
 sudo reboot
 
-12/9/2015 7:12PM
+12/9/2015 7:12 PM
 
 Installed Apache Web Server:
 sudo apt-get install apache2
 (done. wasnt that easy!?)
 
-12/9/2015 9:25PM
+12/9/2015 9:25 PM
 
 download teamspeak server and ssh it to your server.
 extract the .tar:
@@ -154,5 +154,25 @@ Started teamspeak service, verified it was running, and enabled it to start on b
 sudo systemctl start teamspeak
 sudo systemctl status teamspeak
 sudo systemctl enable teamspeak
+Reboot system
+sudo reboot
+
+12/11/2015 3:07 AM
+
+wanted to try out sonarr so i got the repository then downloaded sonarr:
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FDA5DFFC
+echo "deb http://apt.sonarr.tv/ master main" | sudo tee /etc/apt/sources.list.d/sonarr.list
+sudo apt-get install nzbdrone 
+started sonarr:
+mono --debug /opt/NzbDrone/NzbDrone.exe
+tested to make sure it was running:
+http://localhost:8989
+sudo adduser --disabled-password --system --home /var/lib/sonarr --gecos "Sonarr" --ingroup apps sonarr
+Copy sonarr systemd script from ~/scripts to systemd folder:
+sudo cp ~/scripts/sonarr.service /etc/systemd/system/sonarr.service
+Started sonarr service, verified it was running, and enabled it to start on boot:
+sudo systemctl start sonarr
+sudo systemctl status sonarr
+sudo systemctl enable sonarr
 Reboot system
 sudo reboot
