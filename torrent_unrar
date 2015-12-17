@@ -1,0 +1,9 @@
+#!/bin/bash
+cd /mnt/volume2/Torrents/Completed
+unrar e -o- -r *.rar
+rm -r */*.r*
+rm -r */*.nfo
+rm -r */*.sfv
+rm -r *.r*
+rm -r *.nfo
+rm -r *.sfv
