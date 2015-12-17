@@ -7,3 +7,11 @@ rm -r */*.sfv
 rm -r *.r*
 rm -r *.nfo
 rm -r *.sfv
+rm -r *sample*
+rm -r */*sample*
+rm -r */*/*sample*
+rmdir -p */*/*/*/*
+rmdir -p */*/*/*
+rmdir -p */*/*
+rmdir -p */*
+rmdir -p *
