@@ -178,3 +178,15 @@ sudo systemctl status sonarr
 sudo systemctl enable sonarr
 Reboot system
 sudo reboot
+
+12/22/2015 11:08 AM
+
+PlexPy!!!!
+sudo git clone https://github.com/drzoidberg33/plexpy.git /opt/PlexPy
+sudo adduser --disabled-password --system --home /var/lib/PlexPy --gecos "PlexPy" --ingroup apps plexpy
+sudo cp ~/scripts/plexpy.service /etc/systemd/system/plexpy.service
+sudo chown couchpotato -R /opt/PlexPy
+sudo systemctl start plexpy
+sudo systemctl status plexpy
+sudo systemctl enable plexpy
+sudo reboot
