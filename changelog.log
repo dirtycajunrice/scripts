@@ -190,3 +190,18 @@ sudo systemctl start plexpy
 sudo systemctl status plexpy
 sudo systemctl enable plexpy
 sudo reboot
+
+12/22/2015 5:33 PM
+
+Glances (Great CLI Resource Monitor)
+Install Dependancies:
+sudo apt-get install python-pip build-essential python-dev
+Install Glances:
+sudo pip install Glances
+Install Sensor Base package:
+sudo apt-get install lm-sensors
+Install Python modules for Glances:
+sudo pip install https://bitbucket.org/gleb_zhulik/py3sensors/get/tip.tar.gz bottle batinfo py-cpuinfo netifaces zeroconf pymdstat py3sensors
+If you want webserver:
+glances -w
+http://localhost:61208
