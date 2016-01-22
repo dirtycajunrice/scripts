@@ -49,25 +49,25 @@ sudo usermod -a -G apps plex
 
 12/9/2015 3:00 PM
 
-Installed SickGear Dependencies: (with auto yes)
-sudo apt-get install python-cheetah unrar-free git -y
+Installed SickRage Dependencies: (with auto yes)
+sudo apt-get install python-cheetah python-pip python-dev libssl-dev unrar-free git -y
+sudo pip install pyopenssl
 Cloned SickGear github repository:
-sudo git clone https://github.com/SickGear/SickGear.git /opt/SickGear
-Added SickGear User: (no password / system user / home directory / no fuckin idea / what group the user is in / name of user)
-sudo adduser --disabled-password --system --home /var/lib/sickgear --gecos "SickGear" --ingroup apps sickgear
-Changed owner of /opt/SickGear to sickgear: (recursively)
-sudo chown sickgear -R /opt/SickGear
+sudo git clone https://github.com/SickGear/SickGear.git /opt/SickRage
+Added SickRage User: (no password / system user / home directory / no fuckin idea / what group the user is in / name of user)
+sudo adduser --disabled-password --system --home /var/lib/sickrage --gecos "SickRage" --ingroup apps sickrage
+Changed owner of /opt/SickRage to sickrage: (recursively)
+sudo chown sickrage -R /opt/SickRage
 Tested SickGear:
-sudo -u sickgear python /opt/SickGear/SickBeard.py
+sudo -u sickrage python /opt/SickRage/SickBeard.py
 checked that it was active:
 localhost:8081
-Copied SickGear systemd script from ~/scripts to systemd start script folder:
-sudo cp ~/scripts/sickgear.service /etc/systemd/system/sickgear.service
-Enabled the SickGear systemd script:
-sudo systemctl enable sickgear
-sudo systemctl start sickgear
-sudo systemctl status sickgear
-sudo usermod -a -G apps sickgear
+Copied SickRage systemd script from ~/scripts to systemd start script folder:
+sudo cp ~/scripts/sickrage.service /etc/systemd/system/sickrage.service
+Enabled the SickRage systemd script:
+sudo systemctl enable sickrage
+sudo systemctl start sickrage
+sudo systemctl status sickrage
 Rebooted:
 sudo reboot
 
