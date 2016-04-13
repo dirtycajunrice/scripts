@@ -1,0 +1,9 @@
+#!/bin/bash
+
+loc="/dir/backup/$(date +%a-%m.%d.%y-%I.%M.%p)"
+
+sudo rsync -aAX --info=progress2 \
+--exclude={"/dev/*","/proc/*","/sys/*","/movies/*","/movies2/*","/tv/*","/tv2/*","/dir/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} \
+/ "$loc"
+
+find /dir/backup -maxdepth 1 -mindepth 1 -type d -mtime +5 | while read -r line; do rm -rf "$line"; done

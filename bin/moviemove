@@ -1,0 +1,37 @@
+#!/bin/bash
+
+if [[ $(find /dir/torrents/completed  -not \( -iname "*.r*" -o -iname "*.mkv" \
+                                              -o -iname "*.srt*" -o -iname "*.mp4" -o -iname "*.avi" \
+                                              -o -iname "*.m2ts" \) -type f) ]]; then
+    echo "Deleting these files/folders pre-processing:"
+    find /dir/torrents/completed  -not \( -iname "*.r*" -o -iname "*.mkv" -o -iname "*.srt*" \
+                                          -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts" \) \
+                                          -type f -print -delete
+    find /movies /dir/torrents/completed -iname "*sample*" -type f -print -delete                                      
+    find /movies /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
+elif [[ $(find /movies /dir/torrents/completed -mindepth 1 -type d -empty) ]]; then
+    echo "Deleting these folders pre-processing:"
+    find /movies /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
+else
+    echo "No files/folders to delete pre-processing"
+fi
+
+if [[ $(filebot -r -mediainfo --db TheMovieDB /dir/torrents/completed) ]]; then
+    filebot -r --output /movies -rename /dir/torrents/completed --db TheMovieDB \
+               -extract --action move --format "{n} ({y})({vf})/{n} ({y})({vf})"
+else
+    echo "There are no processable movie files"
+fi
+
+if [[ $(find /movies /dir/torrents/completed -not \( -iname "*.mkv" -o -iname "*.mp4" -o -iname "*.avi" \
+                                                     -o -iname "*.m2ts" -o -iname "*.srt" \) \
+                                                     -type f) ]]; then
+    echo "Deleting thise files/folders post-processing:"
+    find /movies /dir/torrents/completed -not \( -iname "*.mkv" -o -iname "*.mp4" -o -iname "*.avi" \
+                                 -o -iname "*.m2ts" -o -iname "*.srt" \) -type f -print -delete
+elif [[ $(find /movies /dir/torrents/completed -mindepth 1 -type d -empty) ]]; then
+    echo "Deleting thise folders post-processing:"
+    find /movies /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
+else
+    echo "No files/folders to delete post-processing" 
+fi

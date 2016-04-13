@@ -1,0 +1,30 @@
+#!/bin/bash
+#This scripts show my personal servers online or offline status
+
+# Variables
+servercluster="apollo ares hermes zeus"
+echo "Cluster Status:"
+awk 'BEGIN {printf "%12s %9s %10s\n", "Server Name", "HTTP", "SSH"}'
+for server in $servercluster; do
+    awk -v server=$server 'BEGIN {printf "%12s", server }'
+    typeset -A status
+    status=(
+    [http]="$(nmap "$server" -Pn -p http | egrep 'open|closed|filtered' | awk 'NR==1{print $2}')"
+    [ssh]="$(nmap "$server" -Pn -p ssh | egrep 'open|closed|filtered' | awk '{print $2}')"
+    )
+    for service in "${!status[@]}"; do
+ #       echo -ne "$service: "
+        if [[ "${status[$service]}"  == "open" ]]; then
+            awk 'BEGIN {printf "%21s", "[\033[32mOnline\033[0m]"}'
+ #           echo -e "[\e[32mOnline\e[0m] "666666666666666
+        elif [[ "${status[$service]}" == "closed" ]]; then
+            awk 'BEGIN {printf "%21s", "[\033[31mOffline\033[0m]"}'
+ #           echo -e "[\e[31mOffline\e[0m] "
+        else
+            awk 'BEGIN {printf "%21s", "[\033[33mTimeout\033[0m]"}'
+ #           echo -e "[\e[33mTimeout\e[0m] "
+        fi
+    done
+    echo
+done
+echo
