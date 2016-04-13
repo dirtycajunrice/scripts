@@ -1,207 +1,143 @@
 Server Changelog:
 
 Initial:
-Installed Ubuntu Server 15.10 with no packages
+Installed Ubuntu Server 15.10
 
-12/8/2015 ?:?? AM
 
-Installed SSH:
-sudo apt-get install ssh -y
-Changed default ssh port so i could access outside: {optional can just add under instead of replace}
-sudo nano /etc/ssh/sshd_config
-Port ???
-Restarted SSH Service
-sudo systemctl restart ssh
+PREREQUISITES
 
-12/8/2015 ?:?? AM
+Installed some manditories:
+sudo apt-get install openssh-server git -y
+
+Added group apps:
+sudo addgroup --system apps
+sudo usermod -a -G apps $USER
 
 Synced DirtyCajunRice's GitHub scripts repository:
-sudo git clone https://github.com/DirtyCajunRice/scripts.git ~
+sudo git clone https://github.com/DirtyCajunRice/scripts.git /opt/DirtyCajunRice
 
-12/8/2015 ?:?? AM
+
+SAMBA
 
 Installed Samba
 sudo apt-get install samba
+
 Set passwords for any and all users:
 sudo smbpasswd -a (user_name) #e.g. sudo smbpasswd -a nick
+
 create share folder: (repeat for all shared folders / -m is to allow the file permission argument 777)
-sudo mkdir -m 777 ~/testshare #or wherever else you want to keep them all organized.
+sudo mkdir -m 755 ~/testshare #or wherever else you want to keep them all organized.
+
 copied the original samba configuration file to the home directory just in case:
 sudo cp /etc/samba/smb.conf ~/smb_original.conf
-added all of the share directories for the previously made shared folders: 
-(copy template out of smb_example.conf in ~/scripts and add to bottom without touching other settings for now)
+
+added all of the share directories for the previously made shared folders: (copy template out of smb_example.conf in /opt/DirtyCajunRice and add to bottom without touching other settings for now)
+cat /opt/DirtyCajunRice/config_ini/smb_example.conf | sudo tee -a /etc/samba/smb.conf
+
 Restarted Samba:
 sudo service smbd restart
-Test to see if files are available!!!
+check to see if files are available
 
-12/8/2015 ?:?? AM
+
+PLEX MEDIA SERVER
 
 Grabbed PlexMediaServer from the website: (get link from website)
-sudo wget https://downloads.plex.tv/plex-media-server/0.9.14.4.1556-a10e3c2/plexmediaserver_0.9.14.4.1556-a10e3c2_amd64.deb
-Installed PlexMediaServer: (astrick is so you dont have to type it all in and -i is install)
-sudo dpkg -i plexmediaserver*
-To access: (or correct internal/external address)
-http://127.0.0.1:32400/web 
-Added group apps:
-sudo addgroup --system apps
+sudo dpkg -i Plex*
 add user plex to apps group:
 sudo usermod -a -G apps plex
 
-12/9/2015 3:00 PM
+
+SICKRAGE
 
 Installed SickRage Dependencies: (with auto yes)
-sudo apt-get install python-cheetah python-pip python-dev libssl-dev unrar-free git -y
-sudo pip install pyopenssl
-Cloned SickGear github repository:
-sudo git clone https://github.com/SickGear/SickGear.git /opt/SickRage
-Added SickRage User: (no password / system user / home directory / no fuckin idea / what group the user is in / name of user)
+sudo apt-get install unrar-free openssl libssl-dev python2.7 -y
+
+Cloned SickRage github repository:
+sudo git clone https://github.com/SickRage/SickRage.git /opt/SickRage
+
+Added SickRage User: (no password / system user / home directory / Description / what group the user is in / name of user)
 sudo adduser --disabled-password --system --home /var/lib/sickrage --gecos "SickRage" --ingroup apps sickrage
+
 Changed owner of /opt/SickRage to sickrage: (recursively)
 sudo chown sickrage -R /opt/SickRage
-Tested SickGear:
-sudo -u sickrage python /opt/SickRage/SickBeard.py
-checked that it was active:
-localhost:8081
-Copied SickRage systemd script from ~/scripts to systemd start script folder:
-sudo cp ~/scripts/sickrage.service /etc/systemd/system/sickrage.service
-Enabled the SickRage systemd script:
-sudo systemctl enable sickrage
-sudo systemctl start sickrage
-sudo systemctl status sickrage
-Rebooted:
-sudo reboot
 
-12/9/2015 3:49 PM
+Copied SickRage systemd script from /optDirtyCajunRice/systemd_services to systemd start script folder:
+sudo cp /optDirtyCajunRice/systemd_services/sickrage.service /etc/systemd/system/sickrage.service
+
+Enabled the SickRage systemd script:
+sudo systemctl start sickrage && sudo systemctl status sickrage
+sudo systemctl enable sickrage
+
+
+DELUGE
 
 Created user deluge and put in system user and group apps.
 sudo adduser --disabled-password --system --home /var/lib/deluge --gecos "Deluge Server" --ingroup apps deluge
-Created logs and changed owner to deluge:
-sudo touch /var/log/deluged.log
-sudo touch /var/log/deluge-web.log
-sudo chown deluge:apps /var/log/deluge*
-Installed the Daemon:
-sudo apt-get install deluged
-Installed the WebUI:
-sudo apt-get install deluge-webui
-Copied deluged systemd script from ~/scripts to systemd start script folder:
-sudo cp ~/scripts/deluged.service /etc/systemd/system/deluged.service
-Started deluged service, verified it was running, and enabled it to start on boot:
-sudo systemctl start deluged
-sudo systemctl status deluged
-sudo systemctl enable deluged
-Copied deluged systemd script from ~/scripts to systemd start script folder:
-sudo cp ~/scripts/deluge-web.service /etc/systemd/system/deluge-web.service
-Started deluged service, verified it was running, and enabled it to start on boot:
-sudo systemctl start deluge-web
-sudo systemctl status deluge-web
-sudo systemctl enable deluge-web
-Created a log directory for Deluge and gave deluge full access:
-sudo mkdir -p /var/log/deluge
-sudo chown -R deluge:apps /var/log/deluge
-sudo chmod -R 750 /var/log/deluge
+
+Created system logs and changed owner to deluge:
+sudo touch /var/log/deluged.log /var/log/deluge-web.log && sudo chown deluge:apps /var/log/deluge*
+
+Installed the Daemon & WebUI:
+sudo apt-get install deluged deluge-webui -y
+Copied deluged systemd script from scripts to systemd start script folder:
+sudo cp /opt/DirtyCajunRice/systemd_services/deluged.service /etc/systemd/system/deluged.service
+sudo cp /opt/DirtyCajunRice/systemd_services/deluge-web.service /etc/systemd/system/deluge-web.service
+
+sudo systemctl start deluged; sudo systemctl start deluge-web
+sudo systemctl status deluged; sudo systemctl status deluge-web
+sudo systemctl enable deluged; sudo systemctl enable deluge-web
+
 Added new Authorization to auth file to allow thin client to work: (had to change some permissions)
-cd /var/lib/deluge
-sudo chmod -R 755 .config
-sudo nano .config/deluge/auth
-add username:password:10
-Restarted server:
-sudo reboot
+sudo chmod -R 755 /var/lib/deluge/.config && sudo chgrp -R apps /var/lib/deluge/.config 
+echo "$USER:password:10" | sudo tee -a /var/lib/deluge/.config/deluge/auth
+
 http://localhost:8112/
 
-12/9/2015 6:50 PM
 
-Cloned CouchPotatoServer github repository:
-sudo git clone https://github.com/RuudBurger/CouchPotatoServer.git /opt/CouchPotatoServer
-Tesed to make sure it was working:
-python /opt/CouchPotatoServer/CouchPotato.py
-http://localhost:5050/
-Copy CouchPotatoServer systemd script from ~/scripts to systemd folder:
-sudo cp ~/scripts/couchpotato.service /etc/systemd/system/couchpotato.service
-Created user couchpotato and put in system user and group apps:
-sudo adduser --disabled-password --system --home /var/lib/couchpotato --gecos "CouchPotato Server" --ingroup apps couchpotato
-Changed Ownership of CouchPotatoServer folder
-sudo chown couchpotato -R /opt/CouchPotatoServer
-Started couchpotato service, verified it was running, and enabled it to start on boot:
-sudo systemctl start couchpotato
-sudo systemctl status couchpotato
-sudo systemctl enable couchpotato
-Rebooted System
-sudo reboot
-
-12/9/2015 7:12 PM
+APACHE2
 
 Installed Apache Web Server:
 sudo apt-get install apache2
-Synced DirtyCajunRice's GitHub dirtycajunrice.com repository:
-sudo git clone https://github.com/DirtyCajunRice/scripts.git ~
+Copied example redirect and generic conf to apache and how to enable them:
+sudo cp /opt/DirtyCajunRice/config_ini/redirect_example.conf /etc/apache2/sites-available/
+sudo cp /opt/DirtyCajunRice/config_ini/site_example.conf /etc/apache2/sites-available/
 
-12/9/2015 9:25 PM
 
-download teamspeak server and ssh it to your server.
-extract the .tar:
-tar xzf teams*
+TEAMSPEAK
+
+wget teamspeak server & extract the .tar:
+wget (link here) && tar xjf teams*
+
 Create teamspeak user and put in system users:
 sudo adduser --disabled-password --system --home /var/lib/teamspeak --gecos "Teamspeak Server" --group teamspeak
-Moved all the files to opt folder:
-sudo mv teamspeak3-server_linux-amd64 /opt/Teamspeak
-Changed Ownership of Teamspeak folder
-sudo chown -R teamspeak /opt/Teamspeak
-Copy Teamspeak systemd script from ~/scripts to systemd folder:
-sudo cp ~/scripts/teamspeak.service /etc/systemd/system/teamspeak.service
-Copy Teamspeak ini file from ~/scripts folder to working directory:
-sudo cp ~/scripts/ts3server.ini /opt/Teamspeak/ts3server.ini
-Tested server and started to get Query account and admin token:
-sudo /opt/Teamspeak/ts3server_startscript.sh start
+
+Moved all the files to opt folder & change ownership:
+sudo mv teamspeak3-server_linux_amd64 /opt/Teamspeak && sudo chown -R teamspeak /opt/Teamspeak
+
+Copy Teamspeak service and ini script from scripts to systemd folder:
+sudo cp /opt/DirtyCajunRice/systemd_services/teamspeak.service /etc/systemd/system/teamspeak.service
+sudo cp /opt/DirtyCajunRice/config_ini/ts3server.ini /opt/Teamspeak/ts3server.ini
+
+start and stop service to get owner token
+sudo -u teamspeak /opt/Teamspeak/ts3server_startscript.sh start && sleep 10 && sudo -u teamspeak /opt/Teamspeak/ts3server_startscript.sh stop
+
 Started teamspeak service, verified it was running, and enabled it to start on boot:
 sudo systemctl start teamspeak
 sudo systemctl status teamspeak
 sudo systemctl enable teamspeak
-Reboot system
-sudo reboot
 
-12/11/2015 3:07 AM
 
-wanted to try out sonarr so i got the repository then downloaded sonarr:   (Side note sonarr shits on sickanything)
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FDA5DFFC
-echo "deb http://apt.sonarr.tv/ master main" | sudo tee /etc/apt/sources.list.d/sonarr.list
-sudo apt-get install nzbdrone 
-started sonarr:
-mono --debug /opt/NzbDrone/NzbDrone.exe
-tested to make sure it was running:
-http://localhost:8989
-sudo adduser --disabled-password --system --home /var/lib/sonarr --gecos "Sonarr" --ingroup apps sonarr
-Copy sonarr systemd script from ~/scripts to systemd folder:
-sudo cp ~/scripts/sonarr.service /etc/systemd/system/sonarr.service
-Started sonarr service, verified it was running, and enabled it to start on boot:
-sudo systemctl start sonarr
-sudo systemctl status sonarr
-sudo systemctl enable sonarr
-Reboot system
-sudo reboot
+PLEXPY
 
-12/22/2015 11:08 AM
-
-PlexPy!!!!
 sudo git clone https://github.com/drzoidberg33/plexpy.git /opt/PlexPy
 sudo adduser --disabled-password --system --home /var/lib/PlexPy --gecos "PlexPy" --ingroup apps plexpy
-sudo cp ~/scripts/plexpy.service /etc/systemd/system/plexpy.service
-sudo chown couchpotato -R /opt/PlexPy
+sudo cp /opt/DirtyCajunRice/systemd_services/plexpy.service /etc/systemd/system/plexpy.service
+sudo chown plexpy -R /opt/PlexPy
 sudo systemctl start plexpy
 sudo systemctl status plexpy
 sudo systemctl enable plexpy
-sudo reboot
 
-12/22/2015 5:33 PM
+GLANCES
 
-Glances (Great CLI Resource Monitor)
-Install Dependancies:
-sudo apt-get install python-pip build-essential python-dev
-Install Glances:
-sudo pip install Glances
-Install Sensor Base package:
-sudo apt-get install lm-sensors
-Install Python modules for Glances:
-sudo pip install https://bitbucket.org/gleb_zhulik/py3sensors/get/tip.tar.gz bottle batinfo py-cpuinfo netifaces zeroconf pymdstat py3sensors
-If you want webserver:
-glances -w
-http://localhost:61208
+Install Dependencies then glances then extras:
+sudo apt-get install python-pip build-essential lm-sensors python-dev && sudo pip install Glances && sudo pip install https://bitbucket.org/gleb_zhulik/py3sensors/get/tip.tar.gz bottle batinfo py-cpuinfo netifaces zeroconf pymdstat py3sensors
