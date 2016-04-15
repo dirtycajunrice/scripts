@@ -46,7 +46,7 @@ if [[ ! -e /opt/DirtyCajunRice ]]; then
 fi
 
 # add postinstall.cron to /etc/cron.d
-cp /opt/DirtyCajunRice/bin/postinstall.cron /etc/cron.d/postinstall.cron
+cp /opt/DirtyCajunRice/bin/postinstallcron /etc/cron.d/postinstallcron
 
 # make a bin link to home dir. 
 ln -s /opt/DirtyCajunRice/bin ~/bin
