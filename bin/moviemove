@@ -17,8 +17,8 @@ else
 fi
 
 if [[ $(filebot -r -mediainfo --db TheMovieDB /dir/torrents/completed) ]]; then
-    filebot -r --output /movies -rename /dir/torrents/completed --db TheMovieDB \
-               -extract --action move --format "{n} ({y})({vf})/{n} ({y})({vf})"
+    filebot -r --output /movies -rename /dir/torrents/completed --db TheMovieDB -extract --action move \
+            --log-file /home/nick/movielists/moviemove.log --format "{n} ({y})({vf})/{n} ({y})({vf})"
 else
     echo "There are no processable movie files"
 fi
