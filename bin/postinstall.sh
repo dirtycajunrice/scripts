@@ -41,6 +41,12 @@ apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
 apt-get install git unrar-free apache2 samba php5 python3.5 python3.4 python expect -y
 
 # add git repo
-sudo git clone https://github.com/DirtyCajunRice/scripts.git /opt/DirtyCajunRice
+if [[ ! -e /opt/DirtyCajunRice ]]; then
+    git clone https://github.com/DirtyCajunRice/scripts.git /opt/DirtyCajunRice
+fi
 
-(crontab -l ; echo '*/5 * * * * /home/nick/bin/10-logo > /etc/motd && /home/nick/bin/50-loadinfo >> /etc/motd && /home/nick/bin/60-cluster-status >> /etc/motd') | crontab -
+# add postinstall.cron to /etc/cron.d
+cp /opt/DirtyCajunRice/bin/postinstall.cron /etc/cron.d/postinstall.cron
+
+# make a bin link to home dir. 
+ln -s /opt/DirtyCajunRice/bin ~/bin
