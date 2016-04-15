@@ -19,13 +19,6 @@ for file in $badfiles; do
     fi
 done
 
-# Download Wanted scripts/files
-wget -q dirtycajunrice.com/bin/10-logo dirtycajunrice.com/bin/50-loadinfo
-
-# Move scripts/files to their final destination and change their respective owners/permissions
-chown root:root 10-logo && chmod 755 10-logo && mv 10-logo /etc/update-motd.d/
-chown root:root 50-loadinfo && chmod 755 50-loadinfo && mv 50-loadinfo /etc/update-motd.d/50-loadinfo
-
 # Append hosts to hostfile
 #echo -e "
 # Added Hosts by DirtyCajunRice on $(date +"%D %r %Z")
@@ -46,3 +39,8 @@ apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
 
 # Install always used programs (including LAMPP)
 apt-get install git unrar-free apache2 samba php5 python3.5 python3.4 python expect -y
+
+# add git repo
+sudo git clone https://github.com/DirtyCajunRice/scripts.git /opt/DirtyCajunRice
+
+(crontab -l ; echo '*/5 * * * * /home/nick/bin/10-logo > /etc/motd && /home/nick/bin/50-loadinfo >> /etc/motd && /home/nick/bin/60-cluster-status >> /etc/motd') | crontab -
