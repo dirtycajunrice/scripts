@@ -112,7 +112,7 @@ Create teamspeak user and put in system users:
 sudo adduser --disabled-password --system --home /var/lib/teamspeak --gecos "Teamspeak Server" --group teamspeak
 
 Moved all the files to opt folder & change ownership:
-sudo mv teamspeak3-server_linux_amd64 /opt/Teamspeak && sudo chown -R teamspeak /opt/Teamspeak
+sudo mv -T teamspeak3-server_linux_amd64 /opt/Teamspeak && sudo chown -R teamspeak /opt/Teamspeak
 
 Copy Teamspeak service and ini script from scripts to systemd folder:
 sudo cp /opt/DirtyCajunRice/systemd_services/teamspeak.service /etc/systemd/system/teamspeak.service

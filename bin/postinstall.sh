@@ -38,7 +38,7 @@ fi
 apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
 
 # Install always used programs (including LAMPP)
-apt-get install git unrar-free apache2 samba php5 python3.5 python3.4 python expect -y
+apt-get install git unrar-free apache2 samba php5 python3.5 python3.4 python expect nmap -y
 
 # add git repo
 if [[ ! -e /opt/DirtyCajunRice ]]; then
@@ -46,6 +46,7 @@ if [[ ! -e /opt/DirtyCajunRice ]]; then
 fi
 
 # add postinstall.cron to /etc/cron.d
+touch /etc/motd
 cp /opt/DirtyCajunRice/bin/postinstallcron /etc/cron.d/postinstallcron
 
 # make a bin link to home dir. 
