@@ -2,7 +2,7 @@
 #This scripts show my personal servers online or offline status
 
 # Variables
-servercluster="apollo ares hermes zeus"
+servercluster="apollo aphrodite ares hercules hermes poseidon zeus"
 echo "Cluster Status:"
 awk 'BEGIN {printf "%12s %9s %10s\n", "Server Name", "HTTP", "SSH"}'
 for server in $servercluster; do
