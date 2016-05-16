@@ -16,7 +16,7 @@ awk -v date="$(date +"%a %b %d %r %Z")" \
     -v cpuuse="$(top -bn 1 | awk 'NR>7{s+=$9} END {print s/4}')" \
     -v memfreal="$(free -h | awk 'NR==2{print $4}')" \
     -v memfcache="$(free -h | awk 'NR==3{print $4}')" \
-    -v swap="$(free -h | awk 'NR==4{print $3}')" \
+    -v swap="$(free -h | awk 'NR==3{print $3}')" \
     -v format="%s %-25s %s %s\n" \
     -v format2="%s %-25s %s %s %s\n" \
     'BEGIN { 
