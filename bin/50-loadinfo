@@ -13,7 +13,7 @@ awk -v date="$(date +"%a %b %d %r %Z")" \
     -v loadavg="$(uptime | awk '{print $10, $11, $12}')" \
     -v sysup="$(uptime -p | sed 's/up //')" \
     -v kernel="$(uname -rp)" \
-    -v cpuuse="$(top -bn 1 | awk 'NR>7{s+=$9} END {print s/4}')" \
+    -v cpuuse="$(top -bn 1 | awk 'NR==3{print 100-$8}')" \
     -v memfreal="$(free -h | awk 'NR==2{print $4}')" \
     -v memfcache="$(free -h | awk 'NR==3{print $4}')" \
     -v swap="$(free -h | awk 'NR==3{print $3}')" \
