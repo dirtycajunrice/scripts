@@ -7,7 +7,7 @@ if [[ $(find /dir/torrents/completed  -not \( -iname "*.r*" -o -iname "*.mkv" \
     find /dir/torrents/completed  -not \( -iname "*.r*" -o -iname "*.mkv" -o -iname "*.srt*" \
                                           -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts" \) \
                                           -type f -print -delete
-    find /movies /dir/torrents/completed -iname "*sample*" -type f -print -delete                                      
+    find /movies /dir/torrents/completed -iname "*sample*" -type f -print -delete
     find /movies /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
 elif [[ $(find /movies /dir/torrents/completed -mindepth 1 -type d -empty) ]]; then
     echo "Deleting these folders pre-processing:"
@@ -33,5 +33,11 @@ elif [[ $(find /movies /dir/torrents/completed -mindepth 1 -type d -empty) ]]; t
     echo "Deleting thise folders post-processing:"
     find /movies /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
 else
-    echo "No files/folders to delete post-processing" 
+    echo "No files/folders to delete post-processing"
+fi
+if [[ $(find /movies ! -group apps -o ! -perm 774 -print) ]]; then
+    echo "Fixing permissions for:"
+    find /movies ! -group apps -o ! -perm 774 -print -exec chmod 774 {} + -o -exec chgrp apps {} +
+else
+    echo "All permissions are correct"
 fi
