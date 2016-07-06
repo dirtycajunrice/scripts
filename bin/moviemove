@@ -21,7 +21,7 @@ fi
 # Run filebot finding movies with TheMovieDB, recursively, Extracting, Moving to X, Renaming by template,
 # and stating all to a log file.
 if [[ $(filebot -r -mediainfo --db TheMovieDB /dir/torrents/completed) ]]; then
-    filebot -r --output /movies -rename /dir/torrents/completed --db TheMovieDB -extract --action move \
+    filebot -r --output /movies2 -rename /dir/torrents/completed --db TheMovieDB -extract --action move \
             --log-file /home/nick/movielists/moviemove.log --format "{n} ({y})({vf})/{n} ({y})({vf})"
 else
     echo "There are no processable movie files"
@@ -37,7 +37,7 @@ if [[ $(find /movies /movies2 /dir/torrents/completed -type f ! \( -iname "*.mkv
                                                                -iname "*.srt" \) -print -delete
 elif [[ $(find /movies /movies2 /dir/torrents/completed -mindepth 1 -type d -empty) ]]; then
     echo "Deleting thise folders post-processing:"
-    find /movies /movies /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
+    find /movies /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
 else
     echo "No files/folders to delete post-processing"
 fi

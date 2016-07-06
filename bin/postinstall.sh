@@ -19,11 +19,6 @@ for file in $badfiles; do
     fi
 done
 
-# Append hosts to hostfile
-#echo -e "
-# Added Hosts by DirtyCajunRice on $(date +"%D %r %Z")
-#$(nslookup dirtycajunrice.com | grep Address | awk 'END { printf $2 }') cajunserver
-#" | tee -a /etc/hosts
 
 # Create .bash_aliases or append to it
 if [[ ! -e ~/.bash_aliases ]]; then
