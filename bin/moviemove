@@ -58,3 +58,7 @@ if [[ $(find /movies /movies2 -type f \( ! -group apps -o ! -perm 664 \)) ]]; th
 else
     echo "All file permissions correct"
 fi
+
+echo  "Updating Plex Movie Database"
+curl http://10.0.10.100:32400/library/sections/1/refresh?X-Plex-Token=bsvLQvFXZxMpeceaXpja
+
