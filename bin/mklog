@@ -1,4 +1,0 @@
-#!/bin/bash
-c=${0##*/}
-exec > >(tee -a >(prepend >> $d/$c.log))
-exec 2> >(prepend error | tee -a $d/$c.log >&2)
