@@ -1,2 +1,2 @@
 #!/bin/bash
-git commit -S --no-gpg-sign -m "$1"
+git commit -S -m "$1"
