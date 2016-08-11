@@ -26,14 +26,14 @@ if [[ ! -e ~/.bash_aliases ]]; then
 fi
 #echo -e "
 # Added aliases by DirtyCajunRice on $(date +"%D %r %Z")
-#alias pastebin='nc termbin.com 9999'
+#alias termbin='nc termbin.com 9999'
 #" >> ~/.bash_aliases
 
 # Update, Upgrade, and Distribution Upgrade
 apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
 
 # Install always used programs (including LAMPP)
-apt-get install git unrar-free apache2 samba php5 python3.5 python3.4 python expect nmap -y
+apt install git-core unrar-free apache2 samba expect nmap -y
 
 # add git repo
 if [[ ! -e /opt/DirtyCajunRice ]]; then
