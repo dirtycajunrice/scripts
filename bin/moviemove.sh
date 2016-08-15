@@ -9,11 +9,11 @@ if [[ $(find /dir/torrents/completed -type f ! \( -iname "*.r*" -o -iname "*.mkv
     find /dir/torrents/completed -type f ! \( -iname "*.r*" -o -iname "*.mkv" -o -iname "*.srt*" \
                                               -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts" \) \
                                               -print -delete
-    find /movies /movies2 /dir/torrents/completed -iname "*sample*" -type f -print -delete
-    find /movies /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
-elif [[ $(find /movies /movies2 /dir/torrents/completed -mindepth 1 -type d -empty) ]]; then
+    find /movies2 /dir/torrents/completed -iname "*sample*" -type f -print -delete
+    find /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
+elif [[ $(find /movies2 /dir/torrents/completed -mindepth 1 -type d -empty) ]]; then
     echo "Deleting these folders pre-processing:"
-    find /movies /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
+    find /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
 else
     echo "No files/folders to delete pre-processing"
 fi
@@ -28,34 +28,34 @@ else
 fi
 
 # After running filebot clean up all files that are extension X deleting the files first then folders recursively
-if [[ $(find /movies /movies2 /dir/torrents/completed -type f ! \( -iname "*.mkv" -o -iname "*.mp4" -o \
+if [[ $(find /movies2 /dir/torrents/completed -type f ! \( -iname "*.mkv" -o -iname "*.mp4" -o \
                                                                    -iname "*.avi" -o -iname "*.m2ts" -o \
                                                                    -iname "*.srt" \)) ]]; then
     echo "Deleting thise files/folders post-processing:"
-    find /movies /movies2 /dir/torrents/completed -type f ! \( -iname "*.mkv" -o -iname "*.mp4" -o \
+    find /movies2 /dir/torrents/completed -type f ! \( -iname "*.mkv" -o -iname "*.mp4" -o \
                                                                -iname "*.avi" -o -iname "*.m2ts" -o \
                                                                -iname "*.srt" \) -print -delete
-    find /movies /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
+    find /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
 
 elif [[ $(find /movies /movies2 /dir/torrents/completed -mindepth 1 -type d -empty) ]]; then
     echo "Deleting thise folders post-processing:"
-    find /movies /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
+    find /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
 else
     echo "No files/folders to delete post-processing"
 fi
 
 # Check to see if directories/files have appropriate permissions if not change to apps and 774 664 respectively
-if [[ $(find /movies /movies2 -type d \( ! -group apps -o ! -perm 774 \)) ]]; then
+if [[ $(find /movies2 -type d \( ! -group apps -o ! -perm 774 \)) ]]; then
     echo "Changing these directories to Group:apps and Permissions:774"
-    find /movies /movies2 -type d \( ! -group apps -o ! -perm 774 \) -print -exec chmod 774 {} + \
+    find /movies2 -type d \( ! -group apps -o ! -perm 774 \) -print -exec chmod 774 {} + \
                                                                      -exec chgrp apps {} +
 else
     echo "All directory permissions correct"
 fi
 
-if [[ $(find /movies /movies2 -type f \( ! -group apps -o ! -perm 664 \)) ]]; then
+if [[ $(find /movies2 -type f \( ! -group apps -o ! -perm 664 \)) ]]; then
     echo "Changing these files to Group:apps and Permissions:664"
-    find /movies /movies2 -type f \( ! -group apps -o ! -perm 664 \) -print -exec chmod 664 {} + \
+    find /movies2 -type f \( ! -group apps -o ! -perm 664 \) -print -exec chmod 664 {} + \
                                                                      -exec chgrp apps {} +
 else
     echo "All file permissions correct"

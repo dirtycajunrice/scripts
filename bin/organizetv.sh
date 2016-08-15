@@ -1,11 +1,7 @@
 #!/bin/bash
 
-echo
-echo "Updating shows.list"
-echo
-
 # sqlite3 database query to pull list of shows from sickbeard.db
-sqlite3 /opt/SickRage/sickbeard.db "SELECT show_name, status FROM tv_shows" | sort > ~/shows.list
+sqlite3 /opt/SickRage/sickbeard.db "SELECT show_name, status FROM tv_shows" | sort > /tmp/shows.list
 
 # Moving shows to /tv (Ended) and /tv2 (Continuing)
 
@@ -21,4 +17,4 @@ while read -r list; do
             mv -nv /tv2/"$name"/ /tv
         fi
     fi
-done < ~/shows.list
+done < /tmp/shows.list
