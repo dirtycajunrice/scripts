@@ -9,7 +9,8 @@ if [[ $(find /dir/torrents/completed -type f ! \( -iname "*.r*" -o -iname "*.mkv
     find /dir/torrents/completed -type f ! \( -iname "*.r*" -o -iname "*.mkv" -o -iname "*.srt*" \
                                               -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts" \) \
                                               -print -delete
-    find /movies2 /dir/torrents/completed -iname "*sample*" -type f -print -delete
+    find /movies2 /dir/torrents/completed \( -iname "*sample*" -o -iname "*trailer*" \) \
+                                             -type f -print -delete
     find /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
 elif [[ $(find /movies2 /dir/torrents/completed -mindepth 1 -type d -empty) ]]; then
     echo "Deleting these folders pre-processing:"
@@ -62,4 +63,4 @@ else
 fi
 
 echo  "Updating Plex Movie Database"
-curl http://10.0.10.100:32400/library/sections/1/refresh?X-Plex-Token=qxz9cdraUwK77M2pZGKK
+curl http://10.0.10.100:32400/library/sections/1/refresh?X-Plex-Token=QLgvoHVwvpqmSGdDBVB1
