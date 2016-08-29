@@ -4,10 +4,11 @@
 # if so delete the files recursively then delete the folders recursively
 if [[ $(find /dir/torrents/completed -type f ! \( -iname "*.r*" -o -iname "*.mkv" \
                                                   -o -iname "*.srt*" -o -iname "*.mp4" -o -iname "*.avi" \
-                                                  -o -iname "*.m2ts" \)) ]]; then
+                                                  -o -iname "*.m2ts" -o -iname "*.m4v"  \)) ]]; then
     echo "Deleting these files/folders pre-processing:"
     find /dir/torrents/completed -type f ! \( -iname "*.r*" -o -iname "*.mkv" -o -iname "*.srt*" \
-                                              -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts" \) \
+                                              -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts"
+                                              -o -iname "*.m4v" \) \
                                               -print -delete
     find /movies2 /dir/torrents/completed \( -iname "*sample*" -o -iname "*trailer*" \) \
                                              -type f -print -delete
@@ -23,7 +24,7 @@ fi
 # and stating all to a log file.
 if [[ $(filebot -r -mediainfo --db TheMovieDB /dir/torrents/completed) ]]; then
     filebot -r --output /movies2 -rename /dir/torrents/completed --db TheMovieDB -extract --action move \
-            --log-file /home/nick/movielists/moviemove.log --format "{n} ({y})({vf})/{n} ({y})({vf})"
+            --log-file /var/log/moviemove.log --format "{n} ({y})({vf})/{n} ({y})({vf})"
 else
     echo "There are no processable movie files"
 fi
@@ -31,11 +32,11 @@ fi
 # After running filebot clean up all files that are extension X deleting the files first then folders recursively
 if [[ $(find /movies2 /dir/torrents/completed -type f ! \( -iname "*.mkv" -o -iname "*.mp4" -o \
                                                                    -iname "*.avi" -o -iname "*.m2ts" -o \
-                                                                   -iname "*.srt" \)) ]]; then
+                                                                   -iname "*.srt"  -o -iname "*.m4v" \)) ]]; then
     echo "Deleting thise files/folders post-processing:"
     find /movies2 /dir/torrents/completed -type f ! \( -iname "*.mkv" -o -iname "*.mp4" -o \
                                                                -iname "*.avi" -o -iname "*.m2ts" -o \
-                                                               -iname "*.srt" \) -print -delete
+                                                               -iname "*.srt"  -o -iname "*.m4v" \) -print -delete
     find /movies2 /dir/torrents/completed -mindepth 1 -type d -empty -print -delete
 
 elif [[ $(find /movies /movies2 /dir/torrents/completed -mindepth 1 -type d -empty) ]]; then
