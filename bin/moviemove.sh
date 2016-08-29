@@ -7,7 +7,7 @@ if [[ $(find /dir/torrents/completed -type f ! \( -iname "*.r*" -o -iname "*.mkv
                                                   -o -iname "*.m2ts" -o -iname "*.m4v"  \)) ]]; then
     echo "Deleting these files/folders pre-processing:"
     find /dir/torrents/completed -type f ! \( -iname "*.r*" -o -iname "*.mkv" -o -iname "*.srt*" \
-                                              -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts"
+                                              -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts" \
                                               -o -iname "*.m4v" \) \
                                               -print -delete
     find /movies2 /dir/torrents/completed \( -iname "*sample*" -o -iname "*trailer*" \) \
