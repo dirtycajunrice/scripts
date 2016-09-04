@@ -15,7 +15,7 @@ while read -r list; do
 # of which windows likes neither. This is irrelevant if you will never try to access your data from a windows machine
 # or SMB share
     name="$(echo "$list" | sed -e 's/|.*//' -e 's/\.$//' -e 's/://')"
-    status="$(echo "$list" | sed 's/.*|//')"
+    status="$(echo "$list" | cut -d'|' -f2)"
     fullpath=$(find /tv* -maxdepth 1 -type d -name "$name")
     if [ "$status" = "Continuing" ]; then
         basename=$(find /tv -maxdepth 1 -type d -name "$name" -exec basename {} \;)
