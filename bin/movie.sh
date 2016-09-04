@@ -16,10 +16,10 @@ fi
 echo $spacer
 if [ ! -w $d/movies.list ]; then
     echo "Created movies.list"
-    ls /movies /movies2 > $d/movies.list
+    ls /movies /movies2 | sort > $d/movies.list
     sed -i -e '/^$/d' -e '/^\//d' $d/movies.list
 else
-    ls /movies /movies2  > $d/movies.list
+    ls /movies /movies2 | sort > $d/movies.list
     sed -i -e '/^$/d' -e '/^\//d' $d/movies.list
     num=$(wc -l < "$d"/movies.list)
     echo "You have $num movies"
@@ -59,6 +59,7 @@ dupeloop() {  # Prints all movies in list and their dupe. No Highlighting.
         movie2=${movie%(*}
         grep -Fv "$movie" $d/movies.list | grep -Fq "$movie2" && printf "%s is duplicate\n" "$movie"
     done < "$d"/"$arg2".list
+    uniq -d "$d"/"$arg2".list
 }
 dupecheck() {
     if [ -z "$(dupeloop)" ]; then

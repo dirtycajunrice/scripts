@@ -1,6 +1,6 @@
 #!/bin/bash
 export LANG=C
-drivelist="$(df -H | awk '$1 ~ /\/dev/ { print $6 }')"
+drivelist="$(df -H | grep sd | awk '$1 ~ /\/dev/ { print $6 }')"
 multidrive="$(df | awk '$1 ~ /\/dev/ { print $6 }' | sed -e 's/\///' -e 's/[0-9]//' -e '/^$/d' | sort | uniq -d)"
 
 awk -v date="$(date +"%a %b %d %r %Z")" \
