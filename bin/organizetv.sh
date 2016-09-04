@@ -10,6 +10,10 @@ count=0
 
 # Moving shows to /tv (Ended) and /tv2 (Continuing)
 while read -r list; do
+# While cut -d'|' -f1 would normally work, it does not in my list of shows. This is because the shows Awkward. and
+# Marvel's Agents of S.H.I.E.L.D. both have trailing periods, and the show Cosmos: A Space Time Odyssey has a colon
+# of which windows likes neither. This is irrelevant if you will never try to access your data from a windows machine
+# or SMB share
     name="$(echo "$list" | sed -e 's/|.*//' -e 's/\.$//' -e 's/://')"
     status="$(echo "$list" | sed 's/.*|//')"
     fullpath=$(find /tv* -maxdepth 1 -type d -name "$name")
