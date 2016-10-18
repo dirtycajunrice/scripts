@@ -33,7 +33,7 @@ fi
 apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
 
 # Install always used programs (including LAMPP)
-apt install git-core unrar-free apache2 samba expect nmap -y
+apt install git-core unrar-free apache2 samba expect nmap curl -y
 
 # add git repo
 if [[ ! -e /opt/DirtyCajunRice ]]; then
@@ -44,5 +44,5 @@ fi
 touch /etc/motd
 cp /opt/DirtyCajunRice/bin/postinstallcron /etc/cron.d/postinstallcron
 
-# make a bin link to home dir. 
+# make a bin link to home dir.
 ln -s /opt/DirtyCajunRice/bin ~/bin
