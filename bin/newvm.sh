@@ -16,7 +16,7 @@ read -erp "New Hostname: " -i "$oldhostname" newhostname
 
 # Echo old IP address then ask for new ip address, suggesting template ip address"
 echo "Old IP address: $oldipaddress"
-read -erp "New IP address: " -i "10.0.10.150" newipaddress
+read -erp "New IP address: " -i "$oldipaddress" newipaddress
 
 # Sanity check. If hostname unchanged, do nothing. Else change it.
 if [[ "$oldhostname" == "$newhostname" ]]; then
