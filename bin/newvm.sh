@@ -19,7 +19,7 @@ echo "Old IP address: $oldipaddress"
 read -erp "New IP address: " -i "10.0.10.150" newipaddress
 
 # Sanity check. If hostname unchanged, do nothing. Else change it.
-if [ $oldhostname -eq $newhostname ]; then
+if [[ $oldhostname == $newhostname ]]; then
 	echo "Hostname unchanged. Hostname is: $oldhostname"
 else
 	sed -i "s/$oldhostname/$newhostname/g" /etc/hosts /etc/hostname
@@ -28,7 +28,7 @@ else
 fi
 
 # Sanity check. If hostname unchanged, do nothing. Else change it.
-if [ $oldipaddress -eq $newipaddress ]; then
+if [[ $oldipaddress == $newipaddress ]]; then
         echo "IP address unchanged. IP address is: $oldipaddress"
 else
         sed -i 's/"$oldipaddress"/"$newipaddress"/g' /etc/network/interfaces
