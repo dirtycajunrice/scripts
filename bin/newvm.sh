@@ -31,7 +31,7 @@ fi
 if [[ $oldipaddress == $newipaddress ]]; then
         echo "IP address unchanged. IP address is: $oldipaddress"
 else
-        sed -i 's/"$oldipaddress"/"$newipaddress"/g' /etc/network/interfaces
+        sed -i 's/"${oldipaddress//./\\.}"/"${newipaddress//./\\.}"/g' /etc/network/interfaces
         sudo ifdown -a && sudo ifup -a
         echo "IP address changed. IP address is :$newipaddress"
 fi
