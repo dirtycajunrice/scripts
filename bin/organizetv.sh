@@ -54,4 +54,3 @@ if (( "$chksize" <= "100000" )); then
 else
     echo "You have $(((chksize - 100000) / 1000))GB left until load-balancing occurs"
 fi
-
