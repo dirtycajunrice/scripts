@@ -1,0 +1,11 @@
+[cluster]
+backup
+codiad
+db
+dev-lab
+media
+netbox
+ns1
+syspass
+web
+znc
