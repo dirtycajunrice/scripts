@@ -1,0 +1,21 @@
+---
+
+- hosts: cluster
+  remote_user: nick
+  become: yes
+  
+  vars:
+    core_packages:
+    - git-core
+    - openssh-server
+    - unrar-free
+    - apache2
+    - samba
+
+  tasks:
+  - name: Installing Core Packages
+    apt: 
+      name={{core_packages}}
+      state=present
+      update_cache=yes
+      cache_valid_time=3600

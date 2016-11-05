@@ -1,0 +1,12 @@
+---
+
+- hosts: cluster
+  remote_user: nick
+  become: yes
+  
+  tasks:
+  - name: Cloning My Github Scripts Repo
+    git:
+      repo=https://github.com/DirtyCajunRice/scripts.git
+      dest=/opt/DirtyCajunRice
+    

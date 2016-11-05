@@ -1,0 +1,15 @@
+---
+# Makes sure all my tools are on all my servers
+# git repo and packages
+
+- hosts: cluster
+  remote_user: nick
+  become: yes
+  
+  tasks:
+  - name: apt update && upgrade
+    apt:
+      upgrade=dist
+      update_cache=yes
+      cache_valid_time=3600
+      autoremove=yes
