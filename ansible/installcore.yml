@@ -7,7 +7,7 @@
   tasks:
   - name: Installing Core Packages
     apt: 
-      name=
+      name:
       - git-core
       - openssh-server
       - unrar-free
