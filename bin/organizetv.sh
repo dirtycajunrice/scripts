@@ -50,7 +50,7 @@ largest=$(du /tv2/* -sB 1G | sort -nr | head -n1 | sed 's,^.*/,,')
 # If the disk space of /tv2 ($chksize) has less than 100,000MB (100GB or .1 TB), then move the largest TV Show
 # ($largest) to /tv3 so that /tv2 can safely grow
 if (( "$chksize" <= "100000" )); then
-    mv /tv2/"$largest" /tv3/"$largest"
+    mv -nv /tv2/"$largest" /tv3/"$largest"
 else
     echo "You have $(((chksize - 100000) / 1000))GB left until load-balancing occurs"
 fi
