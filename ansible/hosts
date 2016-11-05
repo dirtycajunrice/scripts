@@ -1,12 +1,1 @@
-[cluster]
-admin
-backup
-codiad
-db
-dev-lab
-media
-netbox
-ns1
-syspass
-web
-znc
+/etc/ansible/hosts
