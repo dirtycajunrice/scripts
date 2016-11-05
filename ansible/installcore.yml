@@ -7,12 +7,13 @@
   tasks:
   - name: Installing Core Packages
     apt: 
-      name:
+      name={{item}}
+      state=present
+      update_cache=yes
+      cache_valid_time=3600
+    with_items:
       - git-core
       - openssh-server
       - unrar-free
       - apache2
       - samba
-      state=present
-      update_cache=yes
-      cache_valid_time=3600
