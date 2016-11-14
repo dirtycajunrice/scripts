@@ -4,12 +4,12 @@
 Wrapper for the `git commit` command. Does a secure commit with the `-S` flag and then takes input for the `-m` message flag as the statement after the script
 
 ## logo.sh
-My ASCII text logo and a good example of how to use and EOF. This is a modular part of [serverstatus.sh](#serverstatus.sh)
+My ASCII text logo and a good example of how to use and EOF. This is a modular part of [serverstatus.sh](#serverstatussh)
 
 ## moviemove.sh
 *__REQUIRES__*  
 [filebot](https://www.filebot.net)  
-[variables.conf](#variables.conf)
+[variables.conf](#variablesconf)
 
 This script has multiple phases
 
@@ -26,7 +26,7 @@ Placed as a file in a VM which you have templated or clone often.
 
 ## plexupdate.sh
 *__REQUIRES__*  
-[variables.conf](#variables.conf)
+[variables.conf](#variablesconf)
 
 
 
