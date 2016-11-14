@@ -11,7 +11,8 @@ My ASCII text logo and a good example of how to use and EOF. This is a modular p
 [filebot](https://www.filebot.net)  
 [variables.conf](#variables.conf)
 
-This script has multiple phases  
+This script has multiple phases
+
 1. Checks for completed movie downloads in a specified directory and gets the folder ready for processing by deleting erronious filetypes and empty folders
 2. Runs filebot which queries TheMovieDB, checks the folder recursively, Extracts any RARs, Moving to X, Renaming by template, and stating all to a log file
 3. Cleans up all files that are extension X deleting the files first then folders recursively
