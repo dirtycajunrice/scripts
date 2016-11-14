@@ -12,7 +12,7 @@ if [[ -e $loc ]]; then
     exit
 fi
 
-touch $loc
-chmod u+x $loc
-echo '#!/bin/bash' > $loc
-nano $loc
+touch "$loc"
+chmod u+x "$loc"
+echo '#!/bin/bash' > "$loc"
+nano "$loc"

@@ -46,8 +46,8 @@ done | sort -b
 printf "  " && printf "%0.s-" {1..43} && printf "\n"
 
 for drives in $multidrive; do
-    if [[ $(df | grep -c /$drives) -gt 1 ]]; then
-        df -H $(df -H | awk -v drives=$drives '$6 ~ drives { print $6 }' | sort) --total | awk -v drives=$drives \
+    if [[ $(df | grep -c /"$drives") -gt 1 ]]; then
+        df -H $(df -H | awk -v drives="$drives" '$6 ~ drives { print $6 }' | sort) --total | awk -v drives="$drives" \
                 'END { printf "%16s %s %6s %s %s %4s %s\n", drives, "total", "=", $3, "/", $2, $5 }'
     fi
 done
