@@ -1,30 +1,24 @@
 #!/bin/bash
 
-
 # Check if ran by root
 if [[ $UID -ne 0 ]]; then
     echo 'Script must be run as root'
     exit
 fi
-
 # Pull in variables with sensitive information
 source variables.conf
 
 # Variables
-mylink='https://plex.tv/downloads/latest/1?channel=8&build=linux-ubuntu-x86_64&distro=ubuntu&X-Plex-Token='$plextoken
-upgradelink=$(curl -s "$mylink" | cut -d\" -f2)
-curver=$(dpkg -l plexmediaserver | awk 'NR==6{print $3}' | cut -d- -f1)
-curverdel=$(echo $curver | tr -d .)
-newver=$(curl -s "$mylink" | cut -d- -f3 | cut -d/ -f2)
-newverdel=$(echo $newver | tr -d .)
-sessions=$(curl -s 'http://127.0.0.1:32400/status/sessions?X-Plex-Token='$plextoken | grep "MediaContainer size" | awk -F'[\"]' '{print $2}')
+mylink='https://plex.tv/downloads/latest/1?channel=8&build=linux-ubuntu-x86_64&distro=ubuntu&X-Plex-Token='"$plextoken" upgradelink=$(curl -s "$mylink" | cut -d\" -f2)
+curver=$(dpkg -l plexmediaserver | awk 'NR==6{print $3}' | cut -d- -f1) curverdel=$(echo "$curver" | tr -d .) newver=$(curl -s "$mylink" | cut -d- -f3 | cut -d/ -f2)
+newverdel=$(echo "$newver" | tr -d .) sessions=$(curl -s 'http://127.0.0.1:32400/status/sessions?X-Plex-Token='"$plextoken" | grep "MediaContainer size" | awk -F'[\"]' '{print $2}')
 
 # Check for new version
-if [ $curverdel -lt $newverdel ]; then
+if [ "$curverdel" -lt "$newverdel" ]; then
     echo "PlexMediaServer is out of date."
     echo "Current Version: $curver"
     echo "New Version: $newver"
-elif [ $curverdel -eq $newverdel ]; then
+elif [ "$curverdel" -eq "$newverdel" ]; then
     echo "Plex Media Server is Current."
     echo "Current Version: $curver"
     echo "Exiting script"
@@ -32,7 +26,7 @@ elif [ $curverdel -eq $newverdel ]; then
 fi
 
 # Install if nothing running
-if (( $sessions < 1 )) | [[ $1 = '--force' ]]; then
+if (( sessions < 1 )) | [[ $1 = '--force' ]]; then
     if [[ $1 = '--force' ]]; then
         echo "There are currently $sessions active sessions"
         echo "forcing installation anyway"
@@ -40,7 +34,7 @@ if (( $sessions < 1 )) | [[ $1 = '--force' ]]; then
     echo "Downloading New Version..."
     wget -nv -P /tmp/ "$upgradelink" && echo "Download completed successfully"
     echo "Installing New Version"
-    dpkg -i /tmp/*$newver*
+    dpkg -i /tmp/*"$newver"*
 else
     echo "There are currently $sessions active sessions"
     echo "Will not stop viewers"
@@ -49,5 +43,10 @@ else
 fi
 
 # Clean up
-echo "Cleaning up dowloaded .deb file"
-rm /tmp/*$newver*
+for deb in /tmp/*"$newver"*; do
+    if [ -f "$deb" ]; then
+        echo "Cleaning up dowloaded .deb file"
+        rm /tmp/*"$newver"*
+        break
+    fi
+done
