@@ -99,5 +99,7 @@ This file does not exist initially. It is simply a text file with bash variables
 e.g. usernames, passwords, tokens, etc. Examples:  
 username='jdoe'  
 plextoken='a&Ny8&ynONy7'
+
+
 ---
 All scripts that use commands/packages requiring sudo privileges will check for such at the beginning.
