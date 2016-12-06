@@ -71,4 +71,5 @@ if (( "$chksize" <= "100000" )); then
     echo "Started Sickrage"
 else
     echo "You have $(((chksize - 100000) / 1000))GB left until load-balancing occurs"
+    echo "Currently, the next show to be moved is: $largest"
 fi
