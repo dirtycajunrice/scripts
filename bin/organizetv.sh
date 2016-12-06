@@ -58,6 +58,7 @@ chksize=$(df -BMB /tv2 | awk 'NR==2{print $4}' | sed 's/MB//')
 # Checks the directories inside of /tv2, Sorts by # in reverse (to put largest # on top), Takes only the largest
 # folder and then removes everything up to the last / leaving just the folder name as $largest)
 largest=$(du /tv2/* -sB 1G | sort -nr | head -n1 | sed 's,^.*/,,')
+largestsize=$(du -h /tv2/* | sort -nr | head -n1 | cut -f1)
 
 # If the disk space of /tv2 ($chksize) has less than 100,000MB (100GB or .1 TB), then move the largest TV Show
 # ($largest) to /tv3 so that /tv2 can safely grow
@@ -71,5 +72,5 @@ if (( "$chksize" <= "100000" )); then
     echo "Started Sickrage"
 else
     echo "You have $(((chksize - 100000) / 1000))GB left until load-balancing occurs"
-    echo "Currently, the next show to be moved is: $largest"
+    echo "Next to Move: $largest ($largestsize)"
 fi
