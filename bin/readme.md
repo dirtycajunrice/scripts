@@ -6,7 +6,7 @@ Wrapper for the `git commit` command. Does a secure commit with the `-S` flag an
 ## logo.sh
 My ASCII text logo and a good example of how to use and EOF. This is a modular part of [serverstatus.sh](#serverstatussh)
 
-## moviemove.sh
+## moviemove
 *__REQUIRES__*  
 [filebot](https://www.filebot.net)  
 [variables.conf](#variablesconf)
@@ -19,12 +19,12 @@ This script has multiple phases
 4. Checks movie folders, ensuring that all file permissions and ownership are correct. If not it fixes them
 5. Updates [PlexMediaServer](https://www.plex.tv/) in the movies section to scan for new movies with an http request
 
-## newvm.sh
+## newvm
 Placed as a file in a VM which you have templated or clone often.
 * Fixes the minor initial annoyance by renaming the host, and fixing that hostname in all relevant places.
 * Fixes the IP address
 
-## plexupdate.sh
+## plexupdate
 *__REQUIRES__*  
 [variables.conf](#variablesconf)
 
@@ -35,7 +35,7 @@ This script has multiple phases
 3. If either there are no streams currently or you specify `--force`, and your version is out of date, downloads and updates the installation
 4. Cleans up the downloaded .deb file afterwards
 
-## postinstall.sh
+## postinstall
 *__REQUIRES__*  
 [postinstallcron](#postinstallcron)
 
@@ -49,13 +49,13 @@ Ran after a fresh install.
 * Moves [postinstallcron](#postinstallcron) to cron.d for my MOTD
 * Links my bin folder from my repo to my home directory so that bash can add that path automatically
 
-## serverstatus.sh
+## serverstatus
 Gives all major important system statistics:  
 Date | Hostname | External/Internal IP | OS Version | Kernel | Uptime | CPU Load Averages | Current CPU Load | RAM Cached/Free | Swap In Use | Disk Space Breakdown  
 The Disk Space Breakdown also gives grouped space summaries if you named your mount points numerically ascending  
 e.g. /tv /tv2 /tv3 
 
-## gitdelete.sh
+## gitdelete
 Wrapper to delete a github branch. Makes life that much easier when you are doing pull requests and merging consistantly.
 
 ## mkscript.sh
@@ -66,7 +66,7 @@ Does the major things you have to do with all scripts. Argument is the name of t
 * puts you into the script to start editing (Nano)
 ## movie.sh
 
-## organizetv.sh
+## organizetv
 *__REQUIRES__*  
 [Sickrage](https://sickrage.github.io)
 
@@ -81,7 +81,7 @@ This script has multiple phases
 ## postinstallcron
 *__REQUIRES__*  
 [logo.sh](#logosh)  
-[serverstatus.sh](#serverstatussh)
+[serverstatus](#serverstatussh)
 
 Cronjob that concatenates logo.sh and serverstatus.sh to the `/etc/motd` file every 5 minutes.
 
