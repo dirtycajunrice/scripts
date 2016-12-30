@@ -10,7 +10,9 @@ source variables.conf
 
 # Variables
 mylink='https://plex.tv/downloads/latest/1?channel=8&build=linux-ubuntu-x86_64&distro=ubuntu&X-Plex-Token='"$plextoken" upgradelink=$(curl -s "$mylink" | cut -d\" -f2)
-curver=$(dpkg -l plexmediaserver | awk 'NR==6{print $3}' | cut -d- -f1) curverdel=$(echo "$curver" | tr -d .) newver=$(curl -s "$mylink" | cut -d- -f3 | cut -d/ -f2)
+curver=$(dpkg -l plexmediaserver | awk 'NR==6{print $3}' | cut -d- -f1)
+curverdel=$(echo "$curver" | tr -d .)
+newver=$(curl -s "$mylink" | cut -d- -f3 | cut -d/ -f2)
 newverdel=$(echo "$newver" | tr -d .)
 sessions=$(curl -s 'http://127.0.0.1:32400/status/sessions?X-Plex-Token='"$plextoken" | grep "MediaContainer size" | awk -F'[\"]' '{print $2}')
 

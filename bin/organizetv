@@ -20,6 +20,7 @@ while read -r list; do
     if [ "$status" = "Continuing" ]; then
         basename=$(find /tv -maxdepth 1 -type d -name "$name" -exec basename {} \;)
         if [[ "$name" = "$basename" ]]; then
+            echo "$name Is continuing, moving to /tv2"
             mv -nv "$fullpath" /tv2
             sudo systemctl stop sickrage.service
             echo "Stopped Sickrage"
@@ -33,6 +34,7 @@ while read -r list; do
     elif [ "$status" = "Ended" ]; then
         basename=$(find /tv[2-3] -maxdepth 1 -type d -name "$name" -exec basename {} \;)
         if [[ "$name" = "$basename" ]]; then
+            echo "$name has ended, moving to /tv"
             mv -nv "$fullpath" /tv
             sudo systemctl stop sickrage.service
             echo "Stopped Sickrage"
@@ -63,6 +65,7 @@ largestsize=$(du -h /tv2/* | sort -nr | head -n1 | cut -f1)
 # If the disk space of /tv2 ($chksize) has less than 100,000MB (100GB or .1 TB), then move the largest TV Show
 # ($largest) to /tv3 so that /tv2 can safely grow
 if (( "$chksize" <= "100000" )); then
+    echo "$largest is the largest show in /tv2 . Moving it to /tv3 for loadbalancing"
     mv -nv /tv2/"$largest" /tv3/"$largest"
     sudo systemctl stop sickrage.service
     echo "Stopped Sickrage"
