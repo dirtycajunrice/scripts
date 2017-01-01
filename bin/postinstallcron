@@ -1,4 +1,4 @@
 #Group of Cron Jobs that were set up post install
 #
 # Update MOTD every 5 min as root
-*/5 * * * *     root      /home/nick/bin/logo.sh > /etc/motd && /home/nick/bin/serverstatus.sh >> /etc/motd
+*/5 * * * *     root      /home/nick/bin/logo > /etc/motd && /home/nick/bin/serverstatus >> /etc/motd
