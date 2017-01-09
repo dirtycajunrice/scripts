@@ -20,7 +20,7 @@ else
 fi
 
 # Count total number of folders pre-processing
-preprocfolders=$(ls $comploc | wc -l)
+touch /tmp/moviemovetimestamp -t $(date +%y%m%d%H%M)
 
 # Run filebot finding movies with TheMovieDB, recursively, Extracting, Moving to X, Renaming by template,
 # and stating all to a log file.
@@ -31,27 +31,20 @@ else
     echo "There are no processable movie files"
 fi
 
-# Count total number of folders pre-processing
-postprocfolders=$(ls $comploc | wc -l)
-
 # After running filebot clean up all files that are extension X deleting the files first then folders recursively
-if [[ $preprocfolders == $postprocfolders ]]; then
-    if [[ $(find /movies2 "$comploc" -type f ! \( -iname "*.mkv" -o -iname "*.mp4" -o -iname "*.avi" \
-                                                  -o -iname "*.m2ts" -o -iname "*.srt"  -o -iname "*.m4v" \)) ]]; then
-        echo "Deleting thise files/folders post-processing:"
-        find /movies2 "$comploc" -type f ! \( -iname "*.mkv" -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts" -o \
-                                              -iname "*.srt"  -o -iname "*.m4v" \) -print -delete
-        find /movies2 "$comploc" -mindepth 1 -type d -empty -print -delete
-    elif [[ $(find /movies /movies2 "$comploc" -mindepth 1 -type d -empty) ]]; then
-        echo "Deleting thise folders post-processing:"
-        find /movies2 "$comploc" -mindepth 1 -type d -empty -print -delete
-    else
-        echo "No files/folders to delete post-processing"
-    fi
+if [[ $(find /movies2 "$comploc" -type f ! -newer /tmp/moviemovetimestamp ! \( -iname "*.mkv" -o -iname "*.mp4" -o -iname "*.avi" \
+                                              -o -iname "*.m2ts" -o -iname "*.srt"  -o -iname "*.m4v" \)) ]]; then
+    echo "Deleting these files/folders post-processing:"
+    find /movies2 "$comploc" -type f ! -newer /tmp/moviemovetimestamp ! \( -iname "*.mkv" -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts" -o \
+                                          -iname "*.srt"  -o -iname "*.m4v" \) -print -delete
+    find /movies2 "$comploc" -mindepth 1 -type d -empty -print -delete
+elif [[ $(find /movies2 "$comploc" -mindepth 1 -type d -empty) ]]; then
+    echo "Deleting these folders post-processing:"
+    find /movies2 "$comploc" -mindepth 1 -type d -empty -print -delete
 else
-    echo "There were $preprocfolders folders in $comploc pre-processing"
-    echo "but there are $postprocfolders folders after... not deleting anything post-processing"
+    echo "No files/folders to delete post-processing"
 fi
+
 # Check to see if directories/files have appropriate permissions if not change to apps and 774 664 respectively
 if [[ $(find /movies2 -type d \( ! -group apps -o ! -perm 774 \)) ]]; then
     echo "Changing these directories to Group:apps and Permissions:774"
