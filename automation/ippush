@@ -1,0 +1,11 @@
+#!/bin/bash
+dnsserver='123.123.123.123'
+username='dirtycajunrice'
+currentip=$(curl -s ifconfig.co)
+echo "$currentip" > /tmp/currentdynamic.ip
+scp /tmp/currentdynamic.ip $username@$dnsserver:/tmp
+
+# Ideally you will have made SSH Keys to your DNS Server
+# So scp will not need a password. This is also much more
+# secure. Finally, you will need to make a cron job that
+# runs this script at whatever interval you would like

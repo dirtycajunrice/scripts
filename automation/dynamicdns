@@ -1,11 +1,13 @@
 #!/bin/bash
-currentip=$(curl -s ifconfig.co)
-currententry=$(grep home zonefile)
+domain='tld.com'
+zonefile='/etc/bind/zones/db.tld.com'
+currentip=$(/tmp/currentdynamic.ip)
+currententry=$(grep home $zonefile)
 newentry=$(awk -v format="%-8s %-3s %-2s %s\n" \
                -v publicip="$currentip" \
                'BEGIN { printf format, "home", "IN", "A", publicip }')
 oldip=${currententry/^[^[:digit:]]*/}
-currentserial=$(grep -oE "[[:digit:]]{10}" zonefile)
+currentserial=$(grep -oE "[[:digit:]]{10}" $zonefile)
 currentserialinc=${currentserial#?????????}
 serialpre=$(date +%Y%m%d)
 currentserialpre=${currentserial%??}
@@ -17,10 +19,10 @@ if ! [[ "$currentip" == "$oldip" ]]; then
         ((currentserialinc++))
         newserial=${serialpre}${currentserialinc}
     fi
-    sed -ie "s/$currentserial/$newserial/" -e "s/$currententry/$newentry/" zonefile
+    sed -ie "s/$currentserial/$newserial/" -e "s/$currententry/$newentry/" $zonefile
     rndc reload
-    bindlog=$(grep bzdell.com /var/log/messages | tail -n5)
-    echo "Your public IP address has changed from $oldip to $currentip. See below Bind log:
+    bindlog=$(grep $domain /var/log/messages | tail -n5)
+    echo "Your dynamic IP address has changed from $oldip to $currentip. See below Bind log:
     $bindlog" | \
-    mail -s "Your IP address has changed!!" root@localhost
+    mail -s "Your dynamic IP address has changed!!" yourname@google.com
 fi
