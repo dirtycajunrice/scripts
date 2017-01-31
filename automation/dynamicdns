@@ -1,11 +1,18 @@
 #!/bin/bash
+
 domain='tld.com'
-zonefile='/etc/bind/zones/db.tld.com'
+changesub='home'
+#changetld=' A '
+email='dirtycajunrice@dirtycajunrice.com'
+zonefile="/etc/bind/zones/db.$domain"
 currentip=$(/tmp/currentdynamic.ip)
-currententry=$(grep home $zonefile)
+#currententry=$(grep $changetld $zonefile | head -n1)
+currententry=$(grep $changesub $zonefile)
 newentry=$(awk -v format="%-8s %-3s %-2s %s\n" \
                -v publicip="$currentip" \
-               'BEGIN { printf format, "home", "IN", "A", publicip }')
+               -v change="$changerec" \
+               'BEGIN { printf format, changesub, "IN", "A", publicip }')
+#              'BEGIN { printf format, " ", "IN", "A", publicip }')
 oldip=${currententry/^[^[:digit:]]*/}
 currentserial=$(grep -oE "[[:digit:]]{10}" $zonefile)
 currentserialinc=${currentserial#?????????}
@@ -24,5 +31,5 @@ if ! [[ "$currentip" == "$oldip" ]]; then
     bindlog=$(grep $domain /var/log/messages | tail -n5)
     echo "Your dynamic IP address has changed from $oldip to $currentip. See below Bind log:
     $bindlog" | \
-    mail -s "Your dynamic IP address has changed!!" yourname@google.com
+    mail -s "Your dynamic IP address has changed!!" $email
 fi
