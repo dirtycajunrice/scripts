@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# Your domain name
+domain='parentdomain.com'
+# Your record subdomain or alternatively, if you are changing your parentdomain, comment
+# out changesub and uncomment changetld. Remember to keep the space before/after
+# the A so that it doesnt change the SOA.
+changesub='home'
+#changeparent=' A '
+# Your Email Address
+email='dirtycajunrice@dirtycajunrice.com'
+# The location of the zonefile that will be edited. This assumes that you use a
+# db.parentdomain.tld structure. If you do you shouldnt edit this as you edited
+# your domain previously
+zonefile="/etc/bind/zones/db.$domain"
+# This is pulled using the ippush script in the same github folder
+currentip=$(/tmp/currentdynamic.ip)
+# The commented version is if oyu are changing your parent domain. If you changed the
+# prior changeparent, you should switch these
+#currententry=$(grep $changeparent $zonefile | head -n1)
+currententry=$(grep $changesub $zonefile)
+# Formats the record to Bind9 preferences. If you are changing your parent domain, you
+# should switch the BEGIN statements
+newentry=$(awk -v format="%-8s %-3s %-2s %s\n" \
+               -v publicip="$currentip" \
+               -v change="$changerec" \
+               'BEGIN { printf format, changesub, "IN", "A", publicip }')
+#              'BEGIN { printf format, " ", "IN", "A", publicip }')
+# Pulls the current IP in the zonefile
+oldip=${currententry/^[^[:digit:]]*/}
+# Pulls the current serial in the zonefile
+currentserial=$(grep -oE "[[:digit:]]{10}" $zonefile)
+# Pulls the increment of the serial in the zonefile
+currentserialinc=${currentserial#?????????}
+# Prefaces serial enumeration by 4 Digit Year, 2 Digit Month, and 2 Digit Day
+serialpre=$(date +%Y%m%d)
+# Pulls the current serial preface
+currentserialpre=${currentserial%??}
+
+# Checks against the most recent ippush to see if the IP has changed.
+if ! [[ "$currentip" == "$oldip" ]]; then
+    # If it has changed it then establishes whether or not a change has been made today
+    # already or not. If it has it increments it by 1, but if it hasnt, it starts it over.
+    if [[ $serialpre < $currentserialpre ]]; then
+        newserial="${serialpre}01"
+    else
+        ((currentserialinc++))
+        newserial=${serialpre}${currentserialinc}
+    fi
+    # Replaces the serial and the ip address
+    sed -ie "s/$currentserial/$newserial/" -e "s/$currententry/$newentry/" $zonefile
+    # Reloads bind
+    rndc reload
+    # Grabs the most recent logging to send over email, and emails it. Uncomment this if
+    # your server has the ability to mail or uses a mail proxy
+    #bindlog=$(grep $domain /var/log/messages | tail -n5)
+    #echo "Your dynamic IP address has changed from $oldip to $currentip. See below Bind log:
+    #$bindlog" | \
+    #mail -s "Your dynamic IP address has changed!!" $email
+fi
