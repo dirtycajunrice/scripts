@@ -1,32 +1,54 @@
 #!/bin/bash
 
+# Check if ran by root
+if [[ $UID -ne 0 ]]; then
+    echo 'Script must be run as root'
+    exit
+fi
+
 # sqlite3 database query to pull list of shows from sickbeard.db
 sqlite3 /opt/SickRage/sickbeard.db "SELECT show_name, status FROM tv_shows" | sort > /tmp/shows.list
+
+# Variables
+MBbuffersize='400000'
+# Checks disk space of /tv mounts in MB, Prints column 4 (the space free), and removes the MB leaving # as $chksize
+chksizeTV() {
+    chksizeTV=$(df -BMB /tv | awk -F'MB ' 'NR==2{print $3}')
+    chksizeTV1=$(df -BMB /tv1 | awk -F'MB ' 'NR==2{print $3}')
+    chksizeTV2=$(df -BMB /tv2 | awk -F'MB ' 'NR==2{print $3}')
+    chksizeTV3=$(df -BMB /tv3 | awk -F'MB ' 'NR==2{print $3}')
+}
 
 # Total count of shows in DB
 totalcount=$(wc -l < /tmp/shows.list)
 # Counter for shows that are properly placed
 count=0
-
+chksizeTV
 # Moving shows to /tv (Ended) and /tv2 (Continuing)
 while read -r list; do
 # While cut -d'|' -f1 would normally work, it does not in my list of shows. This is because the shows Awkward. and
 # Marvel's Agents of S.H.I.E.L.D. both have trailing periods, and the show Cosmos: A Space Time Odyssey has a colon
 # of which windows likes neither. This is irrelevant if you will never try to access your data from a windows machine
 # or SMB share
-    name="$(echo "$list" | sed -e 's/|.*//' -e 's/\.$//' -e 's/://')"
-    status="$(echo "$list" | cut -d'|' -f2)"
+    name="$(sed -e 's/|.*//' -e 's/\.$//' -e 's/://' <<< "$list")"
+    status="$(cut -d'|' -f2 <<< "$list")"
     fullpath=$(find /tv* -maxdepth 1 -type d -name "$name")
+    if (( "$chksizeTV2" <= "$MBbuffersize" )) || (( "$chksizeTV" <= "$MBbuffersize" )); then
+        echo "/tv has only $(((chksizeTV - MBbuffersize) / 1000))GB left and /tv2 has only \
+        $(((chksizeTV2 - MBbuffersize) / 1000))GB left."
+        echo "One is under your buffer of $((MBbuffersize / 1000))GB. Cancelling"
+        break
+    fi
     if [ "$status" = "Continuing" ]; then
         basename=$(find /tv -maxdepth 1 -type d -name "$name" -exec basename {} \;)
         if [[ "$name" = "$basename" ]]; then
             echo "$name Is continuing, moving to /tv2"
             mv -nv "$fullpath" /tv2
-            sudo systemctl stop sickrage.service
+            systemctl stop sickrage.service
             echo "Stopped Sickrage"
             sqlite3 /opt/SickRage/sickbeard.db "UPDATE tv_shows SET location = \"/tv2/$basename\" WHERE show_name = \"$basename\""
             echo "updated the Sickrage SQLite Database to show that $basename is now in /tv2"
-            sudo systemctl start sickrage.service
+            systemctl start sickrage.service
             echo "Started Sickrage"
         else
             ((count++))
@@ -36,16 +58,17 @@ while read -r list; do
         if [[ "$name" = "$basename" ]]; then
             echo "$name has ended, moving to /tv"
             mv -nv "$fullpath" /tv
-            sudo systemctl stop sickrage.service
+            systemctl stop sickrage.service
             echo "Stopped Sickrage"
             sqlite3 /opt/SickRage/sickbeard.db "UPDATE tv_shows SET location = \"/tv/$basename\" WHERE show_name = \"$basename\""
             echo "updated the Sickrage SQLite Database to show that $basename is now in /tv"
-            sudo systemctl start sickrage.service
+            systemctl start sickrage.service
             echo "Started Sickrage"
         else
             ((count++))
         fi
     fi
+    chksizeTV
 done < /tmp/shows.list
 
 # If all shows were already properly placed, state it
@@ -53,18 +76,14 @@ if ((count = totalcount)); then
     echo "All TV shows are properly placed"
 fi
 
-# Variables for Continuing TV Show Load Balancing
-
-# Checks disk space of /tv2 and /tv3 in MB, Prints column 4 (the space free), and removes the MB leaving # as $chksize
-chksizeTV2=$(df -BMB /tv2 | awk 'NR==2{print $4}' | sed 's/MB//')
-chksizeTV3=$(df -BMB /tv3 | awk 'NR==2{print $4}' | sed 's/MB//')
 # Checks the directories inside of /tv2, Sorts by # in reverse (to put largest # on top), Takes only the largest
 # folder and then removes everything up to the last / leaving just the folder name as $largest)
-largest=$(du /tv2/* -sB 1G | sort -nr | head -n1 | sed 's,^.*/,,')
-largestsize=$(du /tv2/* -sB 1G | sort -nr | head -n1 | cut -f1)
-MBbuffersize='400000'
+largest=$(du /tv2/* -sB 1G | sort -nr | awk -F'/' 'NR==1{print $3}')
+largestsize=$(du /tv2/* -sB 1G | sort -nr | awk 'NR==1{print $1}')
+
 # If the disk space of /tv2 ($chksize) has less than 100,000MB (100GB or .1 TB), then move the largest TV Show
 # ($largest) to /tv3 so that /tv2 can safely grow
+chksizeTV
 while (( "$chksizeTV2" <= "$MBbuffersize" )); do
     if (( "$chksizeTV3" >= "$MBbuffersize" )); then
         echo "$largest is the largest show in /tv2 . Moving it to /tv3 for loadbalancing"
@@ -79,9 +98,12 @@ while (( "$chksizeTV2" <= "$MBbuffersize" )); do
         echo "/tv3 has only $(((chksizeTV2 - MBbuffersize) / 1000))GB left. Cancelling load balancing"
         break
     fi
+    chksizeTV
+    largest=$(du /tv2/* -sB 1G | sort -nr | awk -F'/' 'NR==1{print $3}')
+    largestsize=$(du /tv2/* -sB 1G | sort -nr | awk 'NR==1{print $1}')
 done
     echo "You have specified a $((MBbuffersize / 1000))GB Buffer"
-    echo "You have $(((chksizeTV2 - MBbuffersize) / 1000))GB left until load-balancing occurs"
+    echo "/tv2 has $(((chksizeTV2 - MBbuffersize) / 1000))GB left until load-balancing occurs"
     echo "/tv3 has $(((chksizeTV3 - MBbuffersize) / 1000))GB left available for load-balancing"
     echo "Next to Move: $largest (${largestsize}G)"
 
