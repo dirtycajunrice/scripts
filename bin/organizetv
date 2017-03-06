@@ -102,6 +102,22 @@ while (( "$chksizeTV2" <= "$MBbuffersize" )); do
     largest=$(du /tv2/* -sB 1G | sort -nr | awk -F'/' 'NR==1{print $3}')
     largestsize=$(du /tv2/* -sB 1G | sort -nr | awk 'NR==1{print $1}')
 done
+
+# Check to see if directories/files have appropriate permissions if not change to apps and 774 664 respectively
+if [[ $(find /tv /tv1 /tv2 /tv3 -type d \( ! -group apps -o ! -perm 774 \)) ]]; then
+    echo "Changing these directories to Group:apps and Permissions:774"
+    find /tv /tv1 /tv2 /tv3 -type d \( ! -group apps -o ! -perm 774 \) -print -exec chmod 774 {} + -exec chgrp apps {} +
+else
+    echo "All directory permissions correct"
+fi
+
+if [[ $(find /tv /tv1 /tv2 /tv3 -type f \( ! -group apps -o ! -perm 664 \)) ]]; then
+    echo "Changing these files to Group:apps and Permissions:664"
+    find /tv /tv1 /tv2 /tv3 -type f \( ! -group apps -o ! -perm 664 \) -print -exec chmod 664 {} + -exec chgrp apps {} +
+else
+    echo "All file permissions correct"
+fi
+
     echo "You have specified a $((MBbuffersize / 1000))GB Buffer"
     echo "/tv2 has $(((chksizeTV2 - MBbuffersize) / 1000))GB left until load-balancing occurs"
     echo "/tv3 has $(((chksizeTV3 - MBbuffersize) / 1000))GB left available for load-balancing"
