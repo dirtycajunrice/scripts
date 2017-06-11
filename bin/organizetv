@@ -10,7 +10,7 @@ fi
 sqlite3 /opt/SickRage/sickbeard.db "SELECT show_name, status FROM tv_shows" | sort > /tmp/shows.list
 
 # Variables
-MBbuffersize='400000'
+MBbuffersize='100000'
 # Checks disk space of /tv mounts in MB, Prints column 4 (the space free), and removes the MB leaving # as $chksize
 chksizeTV() {
     chksizeTV=$(df -BMB /tv | awk -F'MB ' 'NR==2{print $3}')
@@ -33,14 +33,14 @@ while read -r list; do
     name="$(sed -e 's/|.*//' -e 's/\.$//' -e 's/://' <<< "$list")"
     status="$(cut -d'|' -f2 <<< "$list")"
     fullpath=$(find /tv* -maxdepth 1 -type d -name "$name")
-    if (( "$chksizeTV2" <= "$MBbuffersize" )) || (( "$chksizeTV" <= "$MBbuffersize" )); then
-        echo "/tv has only $(((chksizeTV - MBbuffersize) / 1000))GB left and /tv2 has only \
+    if (( "$chksizeTV2" <= "$MBbuffersize" )) || (( "$chksizeTV1" <= "$MBbuffersize" )); then
+        echo "/tv1 has only $(((chksizeTV1 - MBbuffersize) / 1000))GB left and /tv2 has only \
         $(((chksizeTV2 - MBbuffersize) / 1000))GB left."
         echo "One is under your buffer of $((MBbuffersize / 1000))GB. Cancelling"
         break
     fi
     if [ "$status" = "Continuing" ]; then
-        basename=$(find /tv -maxdepth 1 -type d -name "$name" -exec basename {} \;)
+        basename=$(find /tv /tv1 -maxdepth 1 -type d -name "$name" -exec basename {} \;)
         if [[ "$name" = "$basename" ]]; then
             echo "$name Is continuing, moving to /tv2"
             mv -nv "$fullpath" /tv2
@@ -57,11 +57,11 @@ while read -r list; do
         basename=$(find /tv[2-3] -maxdepth 1 -type d -name "$name" -exec basename {} \;)
         if [[ "$name" = "$basename" ]]; then
             echo "$name has ended, moving to /tv"
-            mv -nv "$fullpath" /tv
+            mv -nv "$fullpath" /tv1
             systemctl stop sickrage.service
             echo "Stopped Sickrage"
-            sqlite3 /opt/SickRage/sickbeard.db "UPDATE tv_shows SET location = \"/tv/$basename\" WHERE show_name = \"$basename\""
-            echo "updated the Sickrage SQLite Database to show that $basename is now in /tv"
+            sqlite3 /opt/SickRage/sickbeard.db "UPDATE tv_shows SET location = \"/tv1/$basename\" WHERE show_name = \"$basename\""
+            echo "updated the Sickrage SQLite Database to show that $basename is now in /tv1"
             systemctl start sickrage.service
             echo "Started Sickrage"
         else

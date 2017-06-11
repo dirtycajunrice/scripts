@@ -3,6 +3,9 @@ export LANG=C
 drivelist="$(df -H | grep sd | awk '$1 ~ /\/dev/ { print $6 }')"
 multidrive="$(df | awk '$1 ~ /\/dev/ { print $6 }' | sed -e 's/\///' -e 's/[0-9]//' -e '/^$/d' | sort | uniq -d)"
 
+echo "This server is managed by:"
+figlet -f big dirtycajunrice.com -w 100
+
 awk -v date="$(date +"%a %b %d %r %Z")" \
     -v dateu="$(date +"%a %b %d %r %Z %Y" -u)" \
     -v hostname="$(hostname)" \
