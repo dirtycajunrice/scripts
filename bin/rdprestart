@@ -1,2 +1,0 @@
-#!/bin/bash
-net rpc shutdown -S hercules -r -U shutdownacct%matthew1
