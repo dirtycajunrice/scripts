@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source variables.conf
-comploc='/dir/torrents/completed'
+comploc='/cache/torrents/completed'
 
 # Before running filebot check to see if there are any filetypes that arent extension X,
 # if so delete the files recursively then delete the folders recursively
@@ -10,11 +10,11 @@ if [[ $(find "$comploc" -type f ! \( -iname "*.r*" -o -iname "*.mkv" -o -iname "
     echo "Deleting these files/folders pre-processing:"
     find "$comploc" -type f ! \( -iname "*.r*" -o -iname "*.mkv" -o -iname "*.srt*" -o -iname "*.mp4" \
                                  -o -iname "*.avi" -o -iname "*.m2ts" -o -iname "*.m4v" \) -print -delete
-    find /movies2 "$comploc" \( -iname "*sample*" -o -iname "*trailer*" \) -type f -print -delete
-    find /movies2 "$comploc" -mindepth 1 -type d -empty -print -delete
-elif [[ $(find /movies2 "$comploc" -mindepth 1 -type d -empty) ]]; then
+    find /movies1 "$comploc" \( -iname "*sample*" -o -iname "*trailer*" \) -type f -print -delete
+    find /movies1 "$comploc" -mindepth 1 -type d -empty -print -delete
+elif [[ $(find /movies1 "$comploc" -mindepth 1 -type d -empty) ]]; then
     echo "Deleting these folders pre-processing:"
-    find /movies2 "$comploc" -mindepth 1 -type d -empty -print -delete
+    find /movies1 "$comploc" -mindepth 1 -type d -empty -print -delete
 else
     echo "No files/folders to delete pre-processing"
 fi
@@ -25,37 +25,37 @@ touch /tmp/moviemovetimestamp -t $(date +%y%m%d%H%M)
 # Run filebot finding movies with TheMovieDB, recursively, Extracting, Moving to X, Renaming by template,
 # and stating all to a log file.
 if [[ $(filebot -r -mediainfo --db TheMovieDB "$comploc") ]]; then
-    filebot -r --output /movies2 -rename "$comploc" --db TheMovieDB -extract --action move \
+    filebot -r --output /movies1 -rename "$comploc" --db TheMovieDB -extract --action move \
             --log-file /var/log/moviemove.log --format "{n} ({y})({vf})/{n} ({y})({vf})"
 else
     echo "There are no processable movie files"
 fi
 
 # After running filebot clean up all files that are extension X deleting the files first then folders recursively
-if [[ $(find /movies2 "$comploc" -type f ! -newer /tmp/moviemovetimestamp ! \( -iname "*.mkv" -o -iname "*.mp4" -o -iname "*.avi" \
+if [[ $(find /movies1 "$comploc" -type f ! -newer /tmp/moviemovetimestamp ! \( -iname "*.mkv" -o -iname "*.mp4" -o -iname "*.avi" \
                                               -o -iname "*.m2ts" -o -iname "*.srt"  -o -iname "*.m4v" \)) ]]; then
     echo "Deleting these files/folders post-processing:"
-    find /movies2 "$comploc" -type f ! -newer /tmp/moviemovetimestamp ! \( -iname "*.mkv" -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts" -o \
+    find /movies1 "$comploc" -type f ! -newer /tmp/moviemovetimestamp ! \( -iname "*.mkv" -o -iname "*.mp4" -o -iname "*.avi" -o -iname "*.m2ts" -o \
                                           -iname "*.srt"  -o -iname "*.m4v" \) -print -delete
-    find /movies2 "$comploc" -mindepth 1 -type d -empty -print -delete
-elif [[ $(find /movies2 "$comploc" -mindepth 1 -type d -empty) ]]; then
+    find /movies1 "$comploc" -mindepth 1 -type d -empty -print -delete
+elif [[ $(find /movies1 "$comploc" -mindepth 1 -type d -empty) ]]; then
     echo "Deleting these folders post-processing:"
-    find /movies2 "$comploc" -mindepth 1 -type d -empty -print -delete
+    find /movies1 "$comploc" -mindepth 1 -type d -empty -print -delete
 else
     echo "No files/folders to delete post-processing"
 fi
 
 # Check to see if directories/files have appropriate permissions if not change to apps and 774 664 respectively
-if [[ $(find /movies2 -type d \( ! -group apps -o ! -perm 774 \)) ]]; then
+if [[ $(find /movies /movies1 /movies2 -type d \( ! -group apps -o ! -perm 774 \)) ]]; then
     echo "Changing these directories to Group:apps and Permissions:774"
-    find /movies2 -type d \( ! -group apps -o ! -perm 774 \) -print -exec chmod 774 {} + -exec chgrp apps {} +
+    find /movies /movies1 /movies2 -type d \( ! -group apps -o ! -perm 774 \) -print -exec chmod 774 {} + -exec chgrp apps {} +
 else
     echo "All directory permissions correct"
 fi
 
-if [[ $(find /movies2 -type f \( ! -group apps -o ! -perm 664 \)) ]]; then
+if [[ $(find /movies /movies1 /movies2 -type f \( ! -group apps -o ! -perm 664 \)) ]]; then
     echo "Changing these files to Group:apps and Permissions:664"
-    find /movies2 -type f \( ! -group apps -o ! -perm 664 \) -print -exec chmod 664 {} + -exec chgrp apps {} +
+    find /movies /movies1 /movies2 -type f \( ! -group apps -o ! -perm 664 \) -print -exec chmod 664 {} + -exec chgrp apps {} +
 else
     echo "All file permissions correct"
 fi

@@ -1,0 +1,18 @@
+[Unit]
+Description=Tmux Mining Dashboard
+After=network-online.target
+
+[Service]
+User=nick
+Type=simple
+RemainAfterExit=yes
+KillMode=none
+
+ExecStart=/usr/bin/tmux attach -t miner
+ExecStop=/usr/bin/tmux kill-server
+
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=multi-user.target
+

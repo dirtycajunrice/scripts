@@ -1,0 +1,11 @@
+#!/bin/bash
+geth --rpc
+
+nick@worker1:~$ cat run-ethminer
+primarypool="us1.ethermine.org:4444"
+backuppool="eu1.ethermine.org:4444"
+wallet="###############################"
+device=$(hostname)
+
+/opt/cpp-ethereum/build/ethminer/ethminer -G --farm-recheck 200 -S "$primarypool" -FS "$backuppool"  -O "$wallet"."$device"
+
