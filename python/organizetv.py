@@ -4,7 +4,7 @@ import os
 import sys
 import requests
 import shutil
-import stat
+import progressbar
 from operator import itemgetter
 
 URL = 'http://localhost:8989/'
@@ -55,6 +55,16 @@ def show_stats(show_name):  # Update show stats
     return s_name, s_status, s_path, s_size, s_drive_on_disk
 
 
+def folder_size(path):
+    total = 0
+    for entry in os.scandir(path):
+        if entry.is_file():
+            total += entry.stat().st_size
+        elif entry.is_dir():
+            total += folder_size(entry.path)
+    return total
+
+
 def choose_drive(tv_status, show_size):
     for root_drive in show_drive[tv_status]:
         if show_drive[tv_status][root_drive]['free'] - show_size > BUFFER:
@@ -75,21 +85,61 @@ def drives_full(tv_status):
     exit('Error: all ' + tv_status + ' drives have less than ' + str(BUFFER / 1000000) + 'MB remaining')
 
 
-def mover(tv_status, show_size, show_name):
+def mover(tv_status, show_size, show_name, old_drive, reason):
     new_drive = choose_drive(tv_status, show_size)
     if new_drive is not None:
-        print('Moving ' + show_name + ' to ' + new_drive + ' because its current status is ' + status)
-        shutil.move(os.path.join(drive_on_disk, show_name), new_drive)
-        updater(show_name=show_name, show_location=new_drive)
+        if reason == 'ended' or reason == 'continuing':
+            print('Moving ' + show_name + ' from ' + old_drive + ' to ' + new_drive +
+                  ' because its current status is ' + status)
+        elif reason == 'balance':
+            print('Moving ' + show_name + ' from ' + old_drive + ' to ' + new_drive +
+                  ' because ' + old_drive + ' is too full')
+
+        old_location = os.path.join(old_drive, show_name)
+        new_location = os.path.join(new_drive, show_name)
+        all_files = []
+        for root, dirs, files in os.walk(old_location):
+            for file in files:
+                all_files.append(file)
+        with progressbar.ProgressBar(max_value=len(all_files)) as bar:
+            count = 0
+            for root, dirs, files in os.walk(old_location):
+                if not os.path.exists(os.path.join(new_drive, show_name)):
+                    os.makedirs(os.path.join(new_drive, show_name))
+                for dir in dirs:
+                    dir_path = os.path.join(new_drive, dir)
+                    if not os.path.exists(dir_path):
+                        os.makedirs(dir_path)
+                for file in files:
+                    folder_name = os.path.basename(root)
+                    shutil.move(os.path.join(old_location, folder_name, file), os.path.join(new_location, folder_name))
+                    count += 1
+                    bar.update(count)
+
+        if folder_size(old_location) == folder_size(new_location):
+                shutil.rmtree(old_location)
+        else:
+            print('There was something wrong with the move. Please check for consistency')
+
+        print('Updating Sonarr to reflect the move...')
+        status_code = updater(show_name=show_name, show_location=new_drive)
+
+        if status_code == 202:
+            print('Success!')
+        else:
+            print('Sonarr update failed with Status Code: ' + status_code)
+
     else:
         drives_full(status)
 
 
 def updater(show_name, show_location):
     root, paths = os.path.split(SHOWS[show_name]['path'])
-    paths = show_location
+    root = show_location
     SHOWS[show_name]['path'] = os.path.join(root, paths)
-    requests.put(URL + API, headers=HEADERS, json=SHOWS[show_name])
+    put = requests.put(URL + API, headers=HEADERS, json=SHOWS[show_name])
+    return put.status_code
+
 
 # Move all shows to appropriate drives based on status
 for show in SHOWS.keys():
@@ -98,9 +148,9 @@ for show in SHOWS.keys():
     name, status, p, size, drive_on_disk = show_stats(show_name=show)
 
     if drive_on_disk in show_drive['continuing'] and status == 'ended':
-        mover(tv_status=status, show_size=size, show_name=name)
+        mover(tv_status=status, show_size=size, show_name=name, old_drive=drive_on_disk, reason='ended')
     elif drive_on_disk in show_drive['ended'] and status == 'continuing':
-        mover(tv_status=status, show_size=size, show_name=name)
+        mover(tv_status=status, show_size=size, show_name=name,old_drive=drive_on_disk, reason='continuing')
 # move shows on continuing drives with less than buffer
 for show_status in LOAD_BALANCED_STATUSES:
     for hard_drive in show_drive[show_status]:
@@ -113,7 +163,7 @@ for show_status in LOAD_BALANCED_STATUSES:
                 if pre == hard_drive:
                     size_compare.append([name, size])
             biggest_show = max(size_compare, key=itemgetter(1))
-            mover(tv_status=show_status, show_size=biggest_show[1], show_name=biggest_show[0])
+            mover(tv_status=status, show_size=biggest_show[1], show_name=biggest_show[0], old_drive=drive_on_disk, reason='balance')
 
 # make sure all files/folders have correct permissions and ownership
 for show_status in show_drive.keys():
@@ -127,3 +177,4 @@ for show_status in show_drive.keys():
                 full_path = os.path.join(base_dir, f)
                 os.chmod(full_path, 0o664)
                 shutil.chown(full_path, group='apps')
+
