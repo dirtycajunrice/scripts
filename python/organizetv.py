@@ -101,13 +101,14 @@ def mover(tv_status, show_size, show_name, old_drive, reason):
         for root, dirs, files in os.walk(old_location):
             for file in files:
                 all_files.append(file)
+
         with progressbar.ProgressBar(max_value=len(all_files)) as bar:
             count = 0
             for root, dirs, files in os.walk(old_location):
                 if not os.path.exists(os.path.join(new_drive, show_name)):
                     os.makedirs(os.path.join(new_drive, show_name))
                 for dir in dirs:
-                    dir_path = os.path.join(new_drive, dir)
+                    dir_path = os.path.join(new_location, dir)
                     if not os.path.exists(dir_path):
                         os.makedirs(dir_path)
                 for file in files:
