@@ -119,8 +119,8 @@ def mover(tv_status, show_size, show_name, old_drive, reason):
                     count += 1
                     bar.update(count)
 
-        if folder_size(old_location) == folder_size(new_location):
-                shutil.rmtree(old_location)
+        if folder_size(old_location) == 0:
+            shutil.rmtree(old_location)
         else:
             print('There was something wrong with the move. Please check for consistency')
 
