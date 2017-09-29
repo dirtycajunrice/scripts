@@ -48,9 +48,9 @@ def drive_stats():  # Create drives in dict with sizes all in bytes
 def show_stats(show_name):  # Update show stats
     # Sanitize names removing trailing periods and any colons
     s_name = show_name.rstrip('.').replace(':', '')
-    s_status = SHOWS[show]['status']
-    s_path = SHOWS[show]['path']
-    s_size = SHOWS[show]['sizeOnDisk']
+    s_status = SHOWS[show_name]['status']
+    s_path = SHOWS[show_name]['path']
+    s_size = SHOWS[show_name]['sizeOnDisk']
     s_drive_on_disk = where_am_i(show_name=s_name)
     return s_name, s_status, s_path, s_size, s_drive_on_disk
 
