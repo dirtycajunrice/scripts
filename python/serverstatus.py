@@ -6,6 +6,7 @@ from urllib.error import URLError
 from subprocess import check_output
 from dateutil.relativedelta import relativedelta
 
+
 def sanitize(data):
     cleaned_data = data.strip().decode("utf-8")
     return cleaned_data
@@ -17,7 +18,7 @@ def get_public_ip():
             public_ip = sanitize(url.read())
             return public_ip
     except URLError as e:
-        public_ip = 'e'
+        public_ip = e
         return public_ip
     except KeyboardInterrupt:
         pass
@@ -29,7 +30,8 @@ def get_os_info(cpu_model=None, mem_total=None, mem_avail=None, swap_total=None,
         uptime_seconds = round(float(f.readline().split()[0]))
     intervals = ['years', 'months', 'days', 'hours', 'minutes', 'seconds']
     relative_uptime_seconds = relativedelta(seconds=uptime_seconds)
-    uptime = ' '.join('{} {}'.format(getattr(relative_uptime_seconds,k),k) for k in intervals if getattr(relative_uptime_seconds,k))
+    uptime = ' '.join('{} {}'.format(getattr(relative_uptime_seconds,k),k)
+                      for k in intervals if getattr(relative_uptime_seconds,k))
 
     with open('/proc/loadavg', 'r') as f:
         min_1_avg, min_5_avg, min_15_avg, processes, last_process = f.readline().split()
