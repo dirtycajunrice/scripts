@@ -39,7 +39,7 @@ def drive_stats():  # Create drives in dict with sizes all in bytes
             total, used, free = shutil.disk_usage(root_drive)
             show_drive[tv_status][root_drive]['size'] = total
             show_drive[tv_status][root_drive]['free'] = free
-            if show_drive[tv_status][root_drive]['free'] <= BUFFER:
+            if free <= BUFFER:
                 show_drive[tv_status][root_drive]['usable'] = 'no'
             else:
                 show_drive[tv_status][root_drive]['usable'] = 'yes'
@@ -48,10 +48,10 @@ def drive_stats():  # Create drives in dict with sizes all in bytes
 def show_stats(show_name):  # Update show stats
     # Sanitize names removing trailing periods and any colons
     s_name = show_name.rstrip('.').replace(':', '')
-    s_status = SHOWS[show]['status']
-    s_path = SHOWS[show]['path']
-    s_size = SHOWS[show]['sizeOnDisk']
-    s_drive_on_disk = where_am_i(show_name=s_name)
+    s_status = SHOWS[show_name]['status']
+    s_path = SHOWS[show_name]['path']
+    s_size = SHOWS[show_name]['sizeOnDisk']
+    s_drive_on_disk = where_am_i(s_name)
     return s_name, s_status, s_path, s_size, s_drive_on_disk
 
 
@@ -67,7 +67,9 @@ def folder_size(path):
 
 def choose_drive(tv_status, show_size):
     for root_drive in show_drive[tv_status]:
-        if show_drive[tv_status][root_drive]['free'] - show_size > BUFFER:
+        free = show_drive[tv_status][root_drive]['free']
+        """:type : int"""
+        if free - show_size > BUFFER:
             return root_drive
     return None
 
@@ -107,8 +109,8 @@ def mover(tv_status, show_size, show_name, old_drive, reason):
             for root, dirs, files in os.walk(old_location):
                 if not os.path.exists(os.path.join(new_drive, show_name)):
                     os.makedirs(os.path.join(new_drive, show_name))
-                for dir in dirs:
-                    dir_path = os.path.join(new_location, dir)
+                for s_dir in dirs:
+                    dir_path = os.path.join(new_location, s_dir)
                     if not os.path.exists(dir_path):
                         os.makedirs(dir_path)
                 for file in files:
@@ -117,8 +119,8 @@ def mover(tv_status, show_size, show_name, old_drive, reason):
                     count += 1
                     bar.update(count)
 
-        if folder_size(old_location) == folder_size(new_location):
-                shutil.rmtree(old_location)
+        if folder_size(old_location) == 0:
+            shutil.rmtree(old_location)
         else:
             print('There was something wrong with the move. Please check for consistency')
 
@@ -146,36 +148,38 @@ def updater(show_name, show_location):
 for show in SHOWS.keys():
     drive_stats()
     # Sanitize names removing trailing periods and any colons
-    name, status, p, size, drive_on_disk = show_stats(show_name=show)
+    name, status, p, size, drive_on_disk = show_stats(show)
 
     if drive_on_disk in show_drive['continuing'] and status == 'ended':
         mover(tv_status=status, show_size=size, show_name=name, old_drive=drive_on_disk, reason='ended')
     elif drive_on_disk in show_drive['ended'] and status == 'continuing':
-        mover(tv_status=status, show_size=size, show_name=name,old_drive=drive_on_disk, reason='continuing')
+        mover(tv_status=status, show_size=size, show_name=name, old_drive=drive_on_disk, reason='continuing')
 # move shows on continuing drives with less than buffer
 for show_status in LOAD_BALANCED_STATUSES:
     for hard_drive in show_drive[show_status]:
-        while show_drive[show_status][hard_drive]['free'] <= BUFFER:
+        s_free = show_drive[show_status][hard_drive]['free']
+        """:type : int"""
+        while s_free <= BUFFER:
             drive_stats()
             size_compare = []
             for names in SHOWS.keys():
-                name, status, path, size, drive_on_disk = show_stats(show_name=names)
-                pre, base = os.path.split(path)
+                name, status, full_path, size, drive_on_disk = show_stats(names)
+                pre, base = os.path.split(full_path)
                 if pre == hard_drive:
                     size_compare.append([name, size])
             biggest_show = max(size_compare, key=itemgetter(1))
-            mover(tv_status=status, show_size=biggest_show[1], show_name=biggest_show[0], old_drive=drive_on_disk, reason='balance')
+            mover(tv_status=show_status, show_size=biggest_show[1], show_name=biggest_show[0], old_drive=hard_drive,
+                  reason='balance')
 
 # make sure all files/folders have correct permissions and ownership
 for show_status in show_drive.keys():
     for hard_drive in show_drive[show_status]:
-        for base_dir, directory, file in os.walk(hard_drive):
+        for base_dir, directory, s_file in os.walk(hard_drive):
             for d in directory:
                 full_path = os.path.join(base_dir, d)
                 os.chmod(full_path, 0o774)
                 shutil.chown(full_path, group='apps')
-            for f in file:
+            for f in s_file:
                 full_path = os.path.join(base_dir, f)
                 os.chmod(full_path, 0o664)
                 shutil.chown(full_path, group='apps')
-
