@@ -2,7 +2,7 @@ import os
 from time import sleep
 import boto3
 
-domain = 'domain.tld' # Trailing period required!
+domain = 'domain.tld'
 
 client = boto3.client('route53')
 recordName = '_acme-challenge.' + domain
