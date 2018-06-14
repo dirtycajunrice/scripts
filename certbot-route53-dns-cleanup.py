@@ -1,6 +1,6 @@
 import boto3
 
-domain = 'cajun.pro.' # Trailing period required!
+domain = 'domain.tld.' # Trailing period required!
 
 client = boto3.client('route53')
 recordName = '_acme-challenge.' + domain
