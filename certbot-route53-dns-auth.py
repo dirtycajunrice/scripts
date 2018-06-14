@@ -1,5 +1,5 @@
 import os
-import sleep
+from time import sleep
 import boto3
 
 domain = 'domain.tld.' # Trailing period required!
