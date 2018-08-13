@@ -10,7 +10,7 @@ Installed some manditories:
 sudo apt-get install openssh-server git -y
 
 Added group apps:
-sudo addgroup --system apps
+sudo addgroup --gid 117 --system apps
 sudo usermod -a -G apps $USER
 
 Synced DirtyCajunRice's GitHub scripts repository:
