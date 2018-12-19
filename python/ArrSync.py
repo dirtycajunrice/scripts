@@ -49,7 +49,7 @@ for media in regular:
             'monitored': True,
             'addOptions': {}
         }
-        payload[idtype] = media[idtype],
+        payload[idtype] = media[idtype]
         if runtype == 'sonarr':
             payload['seasons'] = []
             payload['addOptions']["searchForMissingEpisodes"] = True
