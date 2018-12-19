@@ -10,16 +10,23 @@ api_key = 'asdf'
 fourk_url = 'https://domain.tld/sonarr4k'
 fourk_api_key = 'asdf'
 
-full_url = f'{url}/api/series?apikey={api_key}'
-fourk_full_url = f'{fourk_url}/api/series?apikey={fourk_api_key}'
-
+# Dont Edit Past Here
 idtype = None
+endpoint = None
+
 if runtype == 'sonarr':
     idtype = 'tvdbId'
+    endpoint = 'series'
 elif runtype == 'radarr':
     idtype = 'tmdbId'
+    endpoint = 'movie'
 else:
     exit(1)
+
+full_url = f'{url}/api/{endpoint}?apikey={api_key}'
+fourk_full_url = f'{fourk_url}/api/{endpoint}?apikey={fourk_api_key}'
+
+
 
 session = requests.session()
 
