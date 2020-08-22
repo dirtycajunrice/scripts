@@ -15,6 +15,6 @@ Options:
   -h, --help     Print this help text.
 
 Upload the contents of plaintext document to a hastebin.
-Invocation with no arguments takes input from stdin or pipe.
+Invocation with no arguments takes input from pipe.
 haste server location can be changed with the $HASTE_SERVER environment variable
 ```
